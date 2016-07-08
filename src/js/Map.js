@@ -1,173 +1,778 @@
+import {capitalize, sprintf} from 'utils'
+import Tool from 'Tool'
 
-        /**
-         * @summary Map Types dictionary
-         */
-        geodrawer.MapTypes = {
-            HYBRID: google.maps.MapTypeId.HYBRID,
-            ROADMAP: google.maps.MapTypeId.ROADMAP,
-            SATELLITE: google.maps.MapTypeId.SATELLITE,
-            TERRAIN: google.maps.MapTypeId.TERRAIN
-        }
+// default options
+const _dftOpts = {
+  center: [45, 7],
+  zoom: 8,
+  tools: {},
+  clearMapCtrl: 'default',
+  exportMapCtrl: 'default',
+  exportMapCb: null,
+  geocoderMapField: true,
+  tipsMapCtrl: 'default'
+}
 
-        /**
-         * @summary Google maps drawing class, provides tools for drawing over a google map instance, and export drawed data.
-         * @classdesc <p>This class handles the drawing tools used to draw over a google map and allows the drawed data exportation.</p>
-         *            <p>The map manages also some controllers</p>
-         *            <ul>
-         *            <li>clear map controller</li>
-         *            <li>export map controller</li>
-         *            <li>geocoder text field controller</li>
-         *            <li>tips controller</li>
-         *            </ul>
-         *            <p>Moreover every drawing tool has its own controller, which may be specifically set or used in its default form.</p>
-         *            <p>Each map controller may be specified custom, may be removed setting the related option to <code>null</code> or used in its default form.</p>
-         *            <p>Once instantiated the class and set the tools by options or instantiating direclty the drawing tool classes and adding them to the map,
-         *            see {@link geodrawer.Map#addTool}, call the render method to render the widget.<br />
-         *            Then it is possible to continue configuring the widget adding or removing tools,
-         *            customizing the google map instance which is returned by the {@link geodrawer.Map#gmap} method.</p>
-         *            <p>When defining specific map controllers, be sure to make them handle the proper map methods.</p>
-         *            <p>Very important: be sure to load the google maps library yourself in the head of the document!</p>
-         *
-         * @constructs geodrawer.Map
-         * @param {Element|String} canvas The map container element as selector or jQuery element
-         * @param {Object} [options] A class options object
-         * @param {Array} [options.center=new Array(45, 7)] The initial map center coordinates, (lat, lng).
-         * @param {Number} [options.zoom=8] The the initial map zoom level.
-         * @param {Object} [options.tools={}] The object containing the tool's names and optionsa to be activated when initializing the map.
-         *                                    It's a shortcut to easily define set and active tools objects.
-         * @param {Object} [options.tools.point=undefined] The point tool init object
-         * @param {String|Element} [options.tools.point.ctrl=undefined] The id attribute or the element itself which controls the tool, default the built-in menu voice
-         * @param {Object} [options.tools.point.options=undefined] The tool options object, see {@link geodrawer.PointTool} for available properties
-         * @param {Object} [options.tools.polyline=undefined] The polyline tool init object
-         * @param {String|Element} [options.tools.polyline.ctrl=undefined] The id attribute or the element itself which controls the tool, default the built-in menu voice
-         * @param {Object} [options.tools.polyline.options=undefined] The tool options object, see {@link geodrawer.PolylineTool} for available properties
-         * @param {Object} [options.tools.polygon=undefined] The polygon tool init object
-         * @param {String|Element} [options.tools.polygon.ctrl=undefined] The id attribute or the element itself which controls the tool, default the built-in menu voice
-         * @param {Object} [options.tools.polygon.options=undefined] The tool options object, see {@link geodrawer.PolygonTool} for available properties
-         * @param {Object} [options.tools.circle=undefined] The circle tool init object
-         * @param {String|Element} [options.tools.circle.ctrl=undefined] The id attribute or the element itself which controls the tool, default the built-in menu voice
-         * @param {Object} [options.tools.circle.options=undefined] The tool options object, see {@link geodrawer.CircleTool} for available properties
-         * @param {String|Element} [options.clear_map_ctrl='default'] The clear map controller (clears all drawings over the map).
-         *                                                    If 'default' the built-in controller is used, if <code>null</code> the clear map
-         *                                                    functionality is removed. If id attribute or an element the clear map functionality is attached to the element.
-         * @param {String|Element} [options.export_map_ctrl='default'] The export map controller (exports all shapes drawed over the map).
-         *                                                     If 'default' the built-in controller is used, if <code>null</code> the export map
-         *                                                     functionality is removed. If id attribute or an element the clear map functionality is attached to the element.
-         * @param {Function} [options.export_map_callback=null] The callback function to call when the export map button is pressed. The callback function receives one argument, the exported data as
-         *                                                      returned by the ajs.maps.gmapdraw.map#exportMap method.
-         * @param {Boolean} [options.geocoder_map_field=true] Whether or not to add the gecoder functionality which allows to center the map in a point defined through an address, or to
-         *                                            pass the lat,lng coordinates found to the map click handlers (exactly as click over the map in a lat,lng point).
-         * @param {String|Element} [options.tips_map_ctrl='default'] The help tips map controller (shows tips about drawing tools).
-         *                                                     If 'default' the built-in controller is used, if <code>null</code> the tips box is not shown,
-         *                                                     if id attribute or an element the functionality is attached to the element.
-         *
-         * @example
-         * var mymap = new geodrawer.Map('my_map_canvas_id', {
-         *     tools: {
-         *         point: {
-         *             options: {
-         *                 max_items: 5
-         *             }
-         *         },
-         *         circle: {}
-         *     }
-         * });
-         *
-         */
-        geodrawer.Map = function (canvas, options) {
-            // default options
-            var _dftOpts = {
-                center: [45, 7],
-                zoom: 8,
-                tools: {},
-                clearMapCtrl: 'default',
-                exportMapCtrl: 'default',
-                exportMapCallback: null,
-                geocoderMapField: true,
-                tipsMapCtrl: 'default'
+/**
+ * @summary Google maps drawing class, provides tools for drawing over a google map canvas, and export drawn data.
+ * @classdesc
+ *      <p>This class handles the drawing tools used to draw over a google map and allows
+ *      data exportation.</p>
+ *      <p>The map manages also some controllers</p>
+ *      <ul>
+ *      <li>clear map controller</li>
+ *      <li>export map controller</li>
+ *      <li>geocoder text field controller</li>
+ *      <li>tips controller</li>
+ *      </ul>
+ *      <p>Moreover every drawing tool has its own controller, which may be specifically set or used in
+ *      its default form.</p>
+ *      <p>Each map controller may be specified as custom, may be removed by setting the
+ *      related option to <code>null</code> or used in its default form.</p>
+ *      <p>Once instantiated the class and set the tools by options or instantiating direclty
+ *      the drawing tool classes and adding them to the map,
+ *      see {@link geodrawer.Map#addTool}, call the render method in order to render the widget.<br />
+ *      It is possible to continue configuring the widget adding or removing tools and
+ *      customize the google map instance which is returned by the {@link geodrawer.Map#gmap} method.</p>
+ *      <p>When defining specific map controllers, be sure to make them handle the proper map methods.</p>
+ *      <p>Very important: be sure to load the google maps library yourself in the head of the document!</p>
+ *
+ * @constructs geodrawer.Map
+ * @param {Element|String} canvas
+ *    The map container element as selector or jQuery element
+ * @param {Object} [options]
+ *    A class options object
+ * @param {Array} [options.center=new Array(45, 7)]
+ *    The initial map center coordinates, (lat, lng).
+ * @param {Number} [options.zoom=8]
+ *    The the initial map zoom level.
+ * @param {Object} [options.tools={}]
+ *    The object containing the tool's names and options to be activated
+ *    when initializing the map.
+ *    It's a shortcut to easily define set and active tools objects.
+ * @param {Object} [options.tools.point=undefined]
+ *    The point tool init object
+ * @param {String|Element} [options.tools.point.ctrl=undefined]
+ *    The selector or jQuery element
+ *    which controls the tool, default the built-in menu voice
+ * @param {Object} [options.tools.point.options=undefined]
+ *    The tool options object,
+ *    see {@link geodrawer.PointTool} for available properties
+ * @param {Object} [options.tools.polyline=undefined]
+ *    The polyline tool init object
+ * @param {String|Element} [options.tools.polyline.ctrl=undefined]
+ *    The selector or jQuery element which controls the tool,
+ *    default the built-in menu voice
+ * @param {Object} [options.tools.polyline.options=undefined]
+ *    The tool options object, see {@link geodrawer.PolylineTool} for available properties
+ * @param {Object} [options.tools.polygon=undefined]
+ *    The polygon tool init object
+ * @param {String|Element} [options.tools.polygon.ctrl=undefined]
+ *    The selector or jQuery element which controls the tool, default the built-in menu voice
+ * @param {Object} [options.tools.polygon.options=undefined]
+ *    The tool options object, see {@link geodrawer.PolygonTool} for available properties
+ * @param {Object} [options.tools.circle=undefined]
+ *    The circle tool init object
+ * @param {String|Element} [options.tools.circle.ctrl=undefined]
+ *    The selctor or jQuery element which controls the tool, default the built-in menu voice
+ * @param {Object} [options.tools.circle.options=undefined]
+ *    The tool options object, see {@link geodrawer.CircleTool} for available properties
+ * @param {String|Element} [options.clearMapCtrl='default']
+ *    The clear map controller (clears all drawings over the map).
+ *    If 'default' the built-in controller is used, if <code>null</code> the clear map
+ *    functionality is removed. If id attribute or an element the clear map functionality is attached to the element.
+ * @param {String|Element} [options.exportMapCtrl='default']
+ *    The export map controller (exports all shapes drawed over the map).
+ *    If 'default' the built-in controller is used, if <code>null</code> the export map
+ *    functionality is removed. If id attribute or an element the clear map functionality is attached to the element.
+ * @param {Function} [options.exportMapCb=null]
+ *    The callback function to call when the export map button is pressed.
+ *    The callback function receives one argument, the exported data as
+ *    returned by the geodrawer.Map#exportMap method.
+ * @param {Boolean} [options.geocoderMapField=true]
+ *    Whether or not to add the gecoder functionality which allows to center the map in a point
+ *    defined through an address, or to pass the lat,lng coordinates found to the map click handlers
+ *    (exactly as click over the map in a lat,lng point).
+ * @param {String|Element} [options.tipsMapCtrl='default']
+ *    The help tips map controller (shows tips about drawing tools).
+ *    If 'default' the built-in controller is used, if <code>null</code> the tips box is not shown,
+ *    if id attribute or an element the functionality is attached to the element.
+ *
+ * @example
+ * var mymap = new geodrawer.Map('my_map_canvas_id', {
+ *   tools: {
+ *     point: {
+ *       options: {
+ *         max_items: 5
+ *       }
+ *     },
+ *     circle: {}
+ *   }
+ * });
+ *
+ */
+export default class Map {
+
+  constructor (canvas, options) {
+    this._dom = {}
+    this._dom.canvas = jQuery(canvas)
+    // check canvas exists
+    if (!this._dom.canvas.length) {
+      throw new Error('Canvas container not found!')
+    }
+
+    // wrap canvas inside a container and add controllers container
+    this._dom.container = jQuery('<div />', {'class': 'geodrawer-container'})
+      .css({
+        width: this._dom.canvas.css('width')
+      })
+    this._dom.controllersContainer = jQuery('<div />', {'class': 'geodrawer-ctrls-container'})
+    this._dom.canvas.wrap(this._dom.container).before(this._dom.controllersContainer)
+
+    // let's extend default options
+    this._options = jQuery.extend({}, _dftOpts, options)
+
+    this._supportedTools = [
+      'point',
+      'polyline',
+      'polygon',
+      'circle'
+    ]
+
+    // internal state
+    this._state = {
+      drawingTool: null, // actual drawing tool
+      tools: [] // available tools
+    }
+
+    this._map = null
+    // when importing data we need bounds to fit them into the map
+    this._bounds = new google.maps.LatLngBounds()
+
+    // controllers
+    this._ctrlContainer = null
+    this._controllers = {
+      clearMap: null,
+      clearMapCb: null,
+      exportMap: null,
+      exportMapCb: null,
+      tipsMap: null,
+      geocoder: null,
+      geocoderField: null,
+      geocoderCenterButton: null,
+      geocoderDrawButton: null
+    }
+
+    // check options!
+    this._processOptions()
+  };
+
+  /**
+   * Processes the options object setting properly some class properties
+   * @return void
+   */
+  _processOptions () {
+    // init tools
+    var self = this
+    this._supportedTools.forEach(
+      (toolName, index) => {
+        if (self._options.tools.hasOwnProperty(toolName)) {
+          var handler = null
+          var ctrl = self._options.tools[toolName].ctrl || null
+          // set tool
+          if (ctrl) {
+            handler = jQuery(ctrl)
+            if (!handler.length) {
+              throw new Error(sprintf('The given control handler for the {0} tool is not a DOM element', toolName))
             }
-
-            this._init = function (canvas, options) {
-                this._canvas = $(canvas);
-                if (!canvas.length) {
-                    throw new Error('Canvas container not found!');
-                }
-
-                this._options = $.extend({}, _dftOpts, options);
-
-                this._supportedTools = [
-                    'point',
-                    'polyline',
-                    'polygon',
-                    'circle'
-                ]
-
-                // internal state
-                this._state = {
-                    drawingTool: null, // actual drawing tool
-                    tools: [] // available tools
-                }
-
-                this._map = null;
-                // controllers
-                this._ctrlContainer = null;
-                this._controllers = {
-                    clearMap: null,
-                    clearMapEvent: null,
-                    exportMap: null,
-                    exportMapEvent: null,
-                    tipsMap: null,
-                    geocoder: null,
-                    geocoderField: null,
-                    geocoderCenterButton: null,
-                    geocoderDrawButton: null
-                }
-
-                // check options!
-                this._processOptions();
-            };
-
-            /**
-             * Processes the options object setting properly some class properties
-             * @return void
-             */
-            this._processOptions = function () {
-                // init tools
-                var self = this;
-                $.each(this._supportedTools, function (index, tool_name) {
-                    if (self._options.tools.hasOwnProperty(tool_name)) {
-                        var handler = null;
-                        var ctrl = self._options.tools[tool_name].ctrl || null;
-                        // set tool
-                        if(ctrl) {
-                            handler = $(ctrl);
-                            if(!handler.length) {
-                                throw new Error('The given control handler for the ' + tool_name + ' tool is not a DOM element');
-                            }
-                        }
-                        // add the tool
-                        self.addTool(new geodrawer[tool_name + 'Tool'](self, handler, self._options.tools[tool_name].options || null));
-                    }
-                });
-            };
-
-            /**
-             * @summary Adds a drawing tool
-             * @memberof geodrawer.Map.prototype
-             * @param {geodrawer.Tool} tool The tool object
-             * @return void
-             */
-            this.addTool = function (tool) {
-                if (!(tool instanceof geodrawer.tool)) {
-                    throw new Error('The given tool object is not of the proper type');
-                }
-
-                if(this._supportedTools.indexOf(tool.getToolName()) === -1) {
-                    throw new Error('The given tool is not supported');
-                }
-                this.state._tools[tool.getToolName()] = tool;
-            },
-
-            this._init(canvas, options);
+          }
+          // add the tool
+          self.addTool(
+            new geodrawer[capitalize(toolName) + 'Tool'](
+              self, handler, self._options.tools[toolName].options || null
+            )
+          )
         }
+      }
+    )
+  }
 
+  /**
+   * Initializes the google map and its events
+   * @memberof ajs.maps.gmapdraw.map.prototype
+   * @return void
+   */
+  _initMap () {
+    let mapCenter = new google.maps.LatLng(this._options.center[0], this._options.center[1])
+    let mapOptions = {
+      center: mapCenter,
+      zoom: this._options.zoom,
+      zoomControlOptions: {
+        style: google.maps.ZoomControlStyle.LARGE,
+        position: google.maps.ControlPosition.RIGHT_CENTER
+      },
+      panControl: false,
+      mapTypeControl: true,
+      mapTypeControlOptions: {
+        position: google.maps.ControlPosition.LEFT_BOTTOM
+      },
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    }
+
+    this._map = new google.maps.Map(this._dom.canvas[0], mapOptions)
+    this._geocoder = new google.maps.Geocoder()
+
+    google.maps.event.addListener(this._map, 'click', (evt) => {
+      this._mapClick(evt)
+    })
+  }
+
+  /**
+   * @summary Initializes all the map controllers
+   * @memberof geodrawer.Map.prototype
+   * @return void
+   */
+  _initControllers () {
+    if (this._options.clearMapCtrl) {
+      this._setClearMapController()
+    }
+
+    if (this._options.exportMapCtrl && this._options.exportMapCb) {
+      this._setExportMapController()
+    }
+
+    if (this._options.tipsMapCtrl) {
+      this._setTipsMapController()
+    }
+
+    if (this._options.geocoderMapField) {
+      this._setGeocoderMapFieldController()
+    }
+  }
+
+  /**
+   * @summary Initializes the map set tools
+   * @memberof geodrawer.Map.prototype
+   * @return void
+   */
+  _initTools () {
+    for (let k in this._state.tools) {
+      if (this._supportedTools.indexOf(k) !== -1) {
+        this._state.tools[k].activate()
+      }
+    }
+  }
+
+  /**
+   * @summary Sets the clear map controller depending on the options.clearMapCtrl value
+   * @memberof geodrawer.Map.prototype
+   * @return void
+   */
+  _setClearMapController () {
+    if (this._options.clearMapCtrl === 'default') {
+      this._controllers.clearMap = jQuery('<div />', {'class': 'geodrawer-ctrls-clear_map'})
+        .text('clear map')
+       .appendTo(this._dom.controllersContainer)
+    } else if (this._options.clearMapCtrl) {
+      this._controllers.clearMap = jQuery(this._options.clearMapCtrl)
+      if (!this._controllers.clearMap) {
+        throw new Error('The given clear map controller is not a DOM element')
+      }
+    }
+    this._controllers.clearMapCb = this.clearMap.bind(this)
+    this._controllers.clearMap.on('click', this._controllers.clearMapCb)
+  }
+
+  /**
+   * @summary Removes the clear map event and the controller if the default one
+   * @memberof geodrawer.Map.prototype
+   * @return void
+   */
+  _removeClearMapController () {
+    // @TODO check me
+    this._controllers.clearMap.off('click', null, this._controllers.clearMapCb)
+    if (this._options.clearMapCtrl === 'default') {
+      this._controllers.clearMap.remove()
+    }
+  }
+
+  /**
+   * @summary Sets the export map controller depending on the options.export_map_ctrl value
+   * @memberof geodrawer.Map.prototype
+   * @return void
+   */
+  _setExportMapController () {
+    if (this._options.exportMapCtrl === 'default') {
+      this._controllers.exportMap = jQuery('<div />', {'class': 'gmapdraw-ctrls-export_map'})
+        .text('export map')
+        .appendTo(this._dom.controllersContainer)
+    } else if (this._options.exportMapCtrl) {
+      this._controllers.exportMap = jQuery(this._options.exportMapCtrl)
+      if (!this._controllers.exportMap.length) {
+        throw new Error('The given export map controller is not a DOM element')
+      }
+    }
+
+    this._controllers.exportMapCb = function () { this._options.exportMapCb(this.exportMap()) }.bind(this)
+    this._controllers.exportMap.on('click', this._controllers.exportMapCb)
+  }
+
+  /**
+   * @summary Removes the export map event and the controller if the default one
+   * @memberof geodrawer.Map.prototype
+   * @return void
+   */
+  _removeExportMapController () {
+    this._controllers.exportMap.off('click', null, this._controllers.exportMapCb)
+    if (this._options.exportMapCtrl === 'default') {
+      this._controllers.exportMap.remove()
+    }
+  }
+
+  /**
+   * @summary Sets the help tips map controller depending on the options.tips_map_ctrl value
+   * @memberof geodrawer.Map.prototype
+   * @method
+   * @protected
+   * @return void
+   */
+  _setTipsMapController () {
+    if (this._options.tipsMapCtrl === 'default') {
+      this._controllers.tipsMap = jQuery('<div />', {'class': 'gmapdraw-ctrls-tips_map'})
+        .appendTo(this._dom.controllersContainer)
+    } else if (this._options.tipsMapCtrl) {
+      this._controllers.tipsMap = jQuery(this._options.tipsMapCtrl)
+      if (!this._controllers.tipsMap.length) {
+        throw new Error('The given tips map controller is not a DOM element')
+      }
+    }
+
+    if (this._controllers.tipsMap.length) {
+      this.updateTips(this._initMapTips())
+    }
+  }
+
+  /**
+   * @summary Removes the tips map controller if the default one
+   * @memberof geodrawer.Map.prototype
+   * @return void
+   */
+  _removeTipsMapController () {
+    if (this._options.tipsMapCtrl === 'default') {
+      this._controllers.tipsMap.remove()
+    }
+  }
+
+  /**
+   * @summary Sets the geocoder input text field and its controllers
+   * @memberof geodrawer.Map.prototype
+   * @return void
+   */
+  _setGeocoderMapFieldController () {
+    this._controllers.geocoderField = jQuery('<input />', {
+      'class': 'gmapdraw-ctrls-geocoder_field',
+      type: 'text',
+      placeholder: 'insert an address'
+    })
+
+    this._controllers.geocoderCenterButton = jQuery('<input />', {
+      'class': 'gmapdraw-ctrls-geocoder_center_button',
+      type: 'button',
+      value: 'set map center'
+    })
+
+    this._controllers.geocoderDrawButton = jQuery('<input />', {
+      'class': 'gmapdraw-ctrls-geocoder_draw_button',
+      type: 'button',
+      value: 'draw'
+    })
+
+    this._controllers.geocoderCenterButton.on('click', this.geocoderCenter.bind(this))
+    this._controllers.geocoderDrawButton.on('click', this.geocoderDraw.bind(this))
+
+    this._dom.controllersContainer.append(
+      this._controllers.geocoderField,
+      this._controllers.geocoderCenterButton,
+      this._controllers.geocoderDrawButton
+    )
+  }
+
+  /**
+   * @summary Removes the geocoder input text field and its controllers
+   * @memberof geodrawer.Map.prototype
+   * @return void
+   */
+  _removeGeocoderMapField () {
+    this._controllers.geocoderCenterButton.off()
+    this._controllers.geocoderDrawButton.off()
+    this._controllers.geocoderField.remove()
+    this._controllers.geocoderCenterButton.remove()
+    this._controllers.geocoderDrawButton.remove()
+  }
+
+  /**
+   * @summary Returns the init text shown in the tips controller
+   * @memberof geodrawer.Map.prototype
+   * @return {String} text The initial tip text
+   */
+  _initMapTips () {
+    return 'Displays help tips about drawing tools'
+  }
+
+  /**
+   * @summary Handles the click event over the map, calling the active tool handler
+   * @memberof geodrawer.Map.prototype
+   * @param {Object} point The callback parameter returned by the google.maps event handler
+   * @return void
+   */
+  _mapClick (point) {
+    if (this._state.drawingTool === null) {
+      return false
+    }
+    this._state.drawingTool.clickHandler(point)
+  }
+
+  // PUBLIC METHODS (to be intended as public ;)
+
+  /**
+   * @summary Adds a drawing tool
+   * @memberof geodrawer.Map.prototype
+   * @param {geodrawer.Tool} tool The tool object
+   * @return void
+   */
+  addTool (tool) {
+    if (!(tool instanceof Tool)) {
+      throw new Error('The given tool object is not of the proper type')
+    }
+
+    let toolName = tool.getToolName()
+
+    if (this._supportedTools.indexOf(toolName) === -1) {
+      throw new Error(sprintf('The tool {0} is not supported', toolName))
+    }
+    this._state.tools[toolName] = tool
+  }
+
+  /**
+   * @summary Gets a tool object giving its name
+   * @memberof geodrawer.Map.prototype
+   * @param {String} toolName One of the supported tools name
+   * @return {geodrawer.Tool | null} The tool object if set or null
+   */
+  getTool (toolName) {
+    if (this._supportedTools.indexOf(toolName) === -1) {
+      throw new Error(sprintf('The {0} tool is not supported', toolName))
+    }
+    return this._state.tools[toolName]
+  }
+
+  /**
+   * @summary Removes a drawing tool
+   * @memberof geodrawer.Map.prototype
+   * @param {String} toolName The name of the tool to be removed
+   * @param {geodrawer.Tool} tool The tool object
+   * @return void
+   */
+  removeTool (toolName) {
+    if (this._supportedTools.indexOf(toolName) === -1) {
+      throw new Error(sprintf('The {0} tool is not supported', toolName))
+    }
+    if (this._state.tools[toolName]) {
+      this._state.tools[toolName].deactivate(true)
+      delete this._state.tools[toolName]
+    }
+  }
+
+  /**
+   * @summary Gets the active drawing tool
+   * @memberof geodrawer.Map.prototype
+   * @return {geodrawer.Tool} The drawing tool
+   */
+  getDrawingTool () {
+    return this._state.drawingTool
+  }
+
+  /**
+   * @summary Sets the active drawing tool name
+   * @memberof geodrawer.Map.prototype
+   * @param {geodrawer.Tool|null} tool The actual drawing tool, null to have no active tool
+   * @return void
+   */
+  setDrawingTool (tool) {
+    if (tool != null && !this._state.tools.hasOwnProperty(tool.getToolName())) {
+      throw new Error('Can\'t set the drawing tool since it\'s not active')
+    }
+    this._state.drawingTool = tool
+  }
+
+  /**
+   * @summary Renders the widget
+   * @memberof geodrawer.Map.prototype
+   * @return void
+   */
+  render () {
+    // map initialization
+    this._initMap()
+    // add controllers
+    this._initControllers()
+    // init tools
+    this._initTools()
+  }
+
+  /**
+   * @summary Adds a controller in the default controllers container
+   * @memberof geodrawer.Map.prototype
+   * @param {Object} ctrl The jQuery controller element to be added
+   * @return void
+   */
+  addDefaultCtrl (ctrl) {
+    if (!ctrl.length) {
+      throw new Error('The given controller is not an element')
+    }
+    ctrl.prependTo(this._dom.controllersContainer)
+  }
+
+  /**
+   * @summary Clears the map
+   * @memberof geodrawer.Map.prototype
+   * @return void
+   */
+  clearMap () {
+    for (let k in this._state.tools) {
+      if (this._supportedTools.indexOf(k) !== -1) {
+        this._state.tools[k].clear()
+      }
+    }
+    console.info('geodrawer: map cleared')
+  }
+
+  /**
+   * @summary Updates the text displayed in the tips controller
+   * @memberof geodrawer.Map.prototype
+   * @param {String} html The tip text
+   * @return void
+   */
+  updateTips (html) {
+    if (this._controllers.tipsMap.length) {
+      this._controllers.tipsMap.html(html)
+    }
+  }
+
+  /**
+   * @summary Returns the google map instance google.maps.Map
+   * @memberof geodrawer.Map.prototype
+   * @description The google map class instance allows to customize direclty some map properties using
+   *              the google.maps.Map public interface
+   * @return {google.maps.Map} The google map instance
+   * @example
+   *   var mygmap = ajs.maps.gmapdraw.map.gmap();
+   *   mygmap.setCenter(new google.maps.LatLng(45, 7));
+   */
+  gmap () {
+    return this._map
+  }
+
+  /**
+   * @summary Sets the center of the map
+   * @memberof geodrawer.Map.prototype
+   * @param {Array} center The [lat, lng] coordinates array
+   * @return void
+   */
+  setCenter (center) {
+    this._options.center = center
+    if (this._map) {
+      this._map.setCenter(new google.maps.LatLng(center[0], center[1]))
+    }
+  }
+
+  /**
+   * @summary Sets the zoom of the map
+   * @memberof geodrawer.Map.prototype
+   * @param {Number} zoom The zoom level
+   * @return void
+   */
+  setZoom (zoom) {
+    this._options.zoom = zoom
+    if (this._map) {
+      this._map.setZoom(zoom)
+    }
+  }
+
+  /**
+   * @summary Sets the clear map controller
+   * @memberof geodrawer.Map.prototype
+   * @param {String|Element} ctrl
+   *    The clear map controller.
+   *    If 'default' the built-in controller is used, if <code>null</code> the clear map
+   *    functionality is removed. If selctor or jQuery element the clear map functionality
+   *    is attached to the element.
+   * @return void
+   */
+  setClearMapCtrl (ctrl) {
+    if (ctrl !== this._options.clearMapCtrl) {
+      this._removeClearMapController()
+    }
+    this._options.clearMapCtrl = ctrl
+    this._setClearMapController()
+  }
+
+  /**
+   * @summary Sets the export map controller
+   * @memberof geodrawer.Map.prototype
+   * @param {String|Element} ctrl
+   *    The clear map controller.
+   *    If 'default' the built-in controller is used, if <code>null</code> the export map
+   *    functionality is removed. If selctor or jQuery element the export map functionality
+   *    is attached to the element.
+   * @return void
+   */
+  setExportMapCtrl (ctrl) {
+    if (ctrl !== this._options.exportMapCtrl) {
+      this._removeExportMapController()
+    }
+    this._options.exportMapCtrl = ctrl
+    this._setExportMapController()
+  }
+
+  /**
+   * @summary Sets the geocoder map field option
+   * @memberof geodrawer.Map.prototype
+   * @param {Boolean} activate Whether or not to activate the geocoder functionality
+   * @return void
+   */
+  setGeocoderMapField (activate) {
+    this._options.geocoderMapField = activate
+    if (!activate) {
+      this._removeGeocoderMapField()
+    } else {
+      this._setGeocoderMapFieldController()
+    }
+  }
+
+  /**
+   * @summary Sets the tips map controller
+   * @memberof geodrawer.Map.prototype
+   * @param {String|Element} ctrl
+   *    The help tips map controller (shows tips about drawing tools).
+   *    If 'default' the built-in controller is used, if <code>null</code> the tips box is not shown,
+   *    if selector or jQuery element the functionality is attached to the element
+   * @return void
+   */
+  setTipsMapCtrl (ctrl) {
+    if (ctrl !== this._options.tipsMapCtrl) {
+      this._removeTipsMapController()
+    }
+    this._options.tipsMapCtrl = ctrl
+    this._setTipsMapController()
+  }
+
+  /**
+   * @summary Exports the map drawed shapes as data points
+   * @memberof geodrawer.Map.prototype
+   * @return {Object} data The drawed data
+   * @example
+   * {
+   *  'point': [
+   *    {lat: 45, lng: 12},
+   *    {lat: 43, lng: 16}
+   *  ],
+   *  'polyline': [
+   *    [
+   *      {lat: 45, lng: 12},
+   *      {lat: 42, lng: 12},
+   *      {lat: 42.6, lng: 11}
+   *    ],
+   *    [
+   *      {lat: 36.7, lng: 11.2},
+   *      {lat: 39, lng: 12}
+   *    ],
+   *  ],
+   *  'circle': [
+   *    {lat: 45, lng: 12, radius: 10000},
+   *    {lat: 44, lng: 11, radius: 230000}
+   *  ]
+   * }
+   */
+  exportMap () {
+    let data = {}
+    for (var k in this._state.tools) {
+      if (this._supportedTools.indexOf(k) !== -1) {
+        data[k] = this._state.tools[k].exportData()
+      }
+    }
+    console.info('geodrawer: exporting data')
+    return data
+  }
+
+  /**
+   * @summary Imports data
+   * @description Data must be in the same format as the exported ones, see {@link geodrawer.Map#exportMap}
+   * @memberof geodrawer.Map.prototype
+   * @param {Object} data The data object
+   */
+  importMap (data) {
+    this._supportedTools.forEach(
+      (toolName) => {
+        if (typeof data[toolName] !== 'undefined') {
+          if (this.getTool(toolName) === null) {
+            let Cls = capitalize(toolName) + 'Tool'
+            let ntool = new Cls(this, null)
+            this.addTool(ntool)
+            ntool.activate()
+          }
+          this.getTool(toolName).importData(data[toolName])
+          this.getTool(toolName).extendBounds(this._bounds)
+        }
+      }
+    )
+    this._map.fitBounds(this._bounds)
+  }
+
+  /**
+   * @summary Sets the map center converting the geocoderf ield input address in a LatLng point
+   * @memberof geodrawer.Map.prototype
+   * @return void
+   */
+  geocoderCenter () {
+    let self = this
+    let request = {
+      address: this._controllers.geocoderField.val()
+    }
+    this._geocoder.geocode(request, (results, status) => {
+      let result = results[0]
+      if (status === 'OK') {
+        self._map.setCenter(result.geometry.location)
+      } else {
+        console.log('geodrawer: geocoder response status: ' + status)
+        alert(status)
+      }
+    })
+  }
+
+  /**
+   * @summary Fires a map click in a LatLng point converted from the geocoder field input address
+   * @memberof geodrawer.Map.prototype
+   * @return void
+   */
+  geocoderDraw () {
+    let self = this
+    let request = {
+      address: this._controllers.geocoderField.val()
+    }
+
+    this._geocoder.geocode(request, (results, status) => {
+      let result = results[0]
+      if (status === 'OK') {
+        if (self._state.drawingTool === null) {
+          alert('select a drawing tool')
+        }
+        self._mapClick({
+          latLng: result.geometry.location
+        })
+      } else {
+        console.log('geodrawer: geocoder response status: ' + status)
+        alert(status)
+      }
+    })
+  }
+}

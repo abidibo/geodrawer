@@ -10,6 +10,10 @@
     "browser" : true
   },
   "globals" : {
+    "$": {},
+    "jQuery": {},
+    "geodrawer": {},
+    "google": {}
   },
   "rules": {
     "semi" : [2, "never"],

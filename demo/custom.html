@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>geodrawer</title>
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyArAE-uBvCZTRaf_eaFn4umUdESmoUvoxM"></script>
+        <script type="text/javascript" src="../dist/geodrawer.js"></script>
+    </head>
+    <body>
+        <h1>GeoDrawer FTW, Custom Controllers</h1>
+        <div id="map-canvas" style="width: 400px; height: 300px;"></div>
+        <button id="point-ctrl">point</button>
+        <button id="clear-ctrl">clear</button>
+        <button id="export-ctrl">export</button>
+        <p id="tips-ctrl"></p>
+        <input type="text" id="geocoder-field-ctrl" />
+        <script type="text/javascript">
+            var cb = function () {
+                var mymap = new geodrawer.Map('#map-canvas', {
+                    tools: {
+                        point: {
+                            options: {
+                                max_items: 5,
+                            },
+                            ctrl: '#point-ctrl'
+                        }
+                    },
+                    clearMapCtrl: '#clear-ctrl',
+                    exportMapCtrl: '#export-ctrl',
+                    exportMapCb: function () {
+                      console.log(this);
+                      console.log(arguments);
+                    },
+                    tipsMapCtrl: '#tips-ctrl',
+                });
+                mymap.render();
+            }
+
+            geodrawer.ready(cb);
+        </script>
+    </body>
+</html>

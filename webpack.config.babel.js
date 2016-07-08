@@ -1,7 +1,7 @@
 import webpack from 'webpack'
-import path from 'path'
+var path = require('path')
 
-const webpackConfig = {
+module.exports = {
   node: {
     fs: 'empty'
   },
@@ -9,7 +9,8 @@ const webpackConfig = {
   resolve: {
     // always import from root (src/js and node_modules)
     root: [
-      'src/js'
+      'src/js',
+      'node_modules'
     ],
     extensions: ['', '.js', '.json']
   },
@@ -45,5 +46,3 @@ const webpackConfig = {
     ]
   }
 }
-
-export default webpackConfig

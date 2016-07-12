@@ -546,12 +546,14 @@ const Map = class {
    * @return void
    */
   setDrawingTool (tool) {
-    if (tool != null && !this._state.tools.hasOwnProperty(tool.getToolName())) {
+    if (tool !== null && !this._state.tools.hasOwnProperty(tool.getToolName())) {
       throw new Error('Can\'t set the drawing tool since it\'s not active')
     }
     Object.keys(this._state.tools).forEach((k) => this._state.tools[k].setUnselected())
-    tool.setSelected()
     this._state.drawingTool = tool
+    if (tool) {
+      tool.setSelected()
+    }
   }
 
   /**

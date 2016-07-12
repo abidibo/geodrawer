@@ -11,7 +11,8 @@ const PointTool = class extends Tool {
    * Constructs a point tool
    *
    * @param {Map} map The map instance which handles the tool
-   * @param {String|Object} ctrl The selector or jQuery element which controls the tool when clicking over it
+   * @param {String|Object} ctrl The selector or jQuery element which controls the tool when clicking over it,
+   *                        set to null to have the default controller
    * @param {Object} options A class options object
    * @param {Number} [options.max_items_allowed=1] The maximum number of shapes the tool may draw
    */

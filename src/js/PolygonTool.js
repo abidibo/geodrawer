@@ -11,14 +11,15 @@ const PolygonTool = class extends Tool {
    * Constrcuts a polygon tool
    *
    * @param {Map} map The map instance which handles the tool
-   * @param {String|Object} ctrl The selector or the jQuery element which controls the tool when clicking over it
+   * @param {String|Object} ctrl The selector or the jQuery element which controls the tool when clicking over it,
+   *                        set to null to have the default controller
    * @param {Object} options A class options object
    * @param {Number} [options.maxItemsAllowed=1] The maximum number of shapes the tool may draw.
    */
   constructor (map, ctrl, options) {
     super(map, ctrl, 'polygon')
 
-    this._activePolygonIndex = null
+    this._state.activePolygonIndex = null
     this._options = jQuery.extend({}, this._options, options)
   }
 
@@ -60,13 +61,13 @@ const PolygonTool = class extends Tool {
         shape: polygon
       }
       this._state.items.push(polygonItem)
-      this._activePolygonIndex = this._state.items.indexOf(polygonItem)
+      this._state.activePolygonIndex = this._state.items.indexOf(polygonItem)
 
       // right click to delete one
       google.maps.event.addListener(polygon, 'rightclick', () => {
         polygon.setMap(null)
         this._state.items.splice(this._state.items.indexOf(polygonItem), 1)
-        this._activePolygonIndex-- // one item has been removed, indexes shift down
+        this._state.activePolygonIndex-- // one item has been removed, indexes shift down
         this._nextShape = true // otherwise next click will populate the last polyline
       })
 
@@ -78,7 +79,7 @@ const PolygonTool = class extends Tool {
       return null
     } else {
       // add a point to the current polyline
-      this._state.items[this._activePolygonIndex].path.push(evt.latLng)
+      this._state.items[this._state.activePolygonIndex].path.push(evt.latLng)
     }
   }
 
@@ -91,6 +92,8 @@ const PolygonTool = class extends Tool {
       polygon.shape.setMap(null)
     })
     this._state.items = []
+    this._state.activePolygonIndex = null
+    this._nextShape = true
     console.info('polygons cleared')
   }
 

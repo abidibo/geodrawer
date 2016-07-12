@@ -15,7 +15,8 @@ const Tool = class {
    * @summary Constructs a Tool object
    *
    * @param {Map} map The Map instance which handles the tool
-   * @param {String|Element} ctrl The selector or the element itself which controls the tool when clicking over it
+   * @param {String|Element} ctrl The selector or the element itself which controls the tool when clicking over it,
+   *                         set to null to have the default controller
    * @param {String} toolName The drawing tool name
    */
   constructor (map, ctrl, toolName) {
@@ -113,7 +114,7 @@ const Tool = class {
 
   /**
    * @summary Activates the tool
-   * @return void
+   * @return {Tool} instance
    */
   activate () {
     this._state.active = true
@@ -125,12 +126,14 @@ const Tool = class {
     this._ctrl.addClass('geodrawer-ctrl-active')
 
     console.info(sprintf('geodrawer: {0} tool activated', this._toolName))
+
+    return this
   }
 
   /**
    * @summary Removes the tool
    * @param {Boolean} [removeCtrl=false] Whether or not to remove the tool control if the default one
-   * @return void
+   * @return {Tool} instance
    */
   deactivate (removeCtrl = false) {
     if (this._state.active) {
@@ -155,17 +158,19 @@ const Tool = class {
       }
       console.info(sprintf('{0} tool already deactivated', this._toolName))
     }
+    return this
   }
 
   /**
    * @summary Sets the current drawing tool
-   * @return void
+   * @return {Tool} instance
    */
   setDrawing () {
     this.prepareTool()
     this._map.updateTips(this.tipsText())
     console.info('geodrawer: drawing tool: ' + this._toolName)
     this._map.setDrawingTool(this)
+    return this
   }
 
   /**

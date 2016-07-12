@@ -11,14 +11,15 @@ const PolylineTool = class extends Tool {
    * Constructs a polyline tool
    *
    * @param {Map} map The map instance which handles the tool
-   * @param {String|Object} ctrl The selector or jQuery element which controls the tool when clicking over it
+   * @param {String|Object} ctrl The selector or jQuery element which controls the tool when clicking over it,
+   *                        set to null to have the default controller
    * @param {Object} options A class options object
    * @param {Number} [options.maxItemsAllowed=1] The maximum number of shapes the tool may draw.
    */
   constructor (map, ctrl, options) {
     super(map, ctrl, 'polyline')
 
-    this._activePolylineIndex = null
+    this._state.activePolylineIndex = null
     this._options = jQuery.extend({}, this._options, options)
   }
 
@@ -60,13 +61,13 @@ const PolylineTool = class extends Tool {
         shape: polyline
       }
       this._state.items.push(polylineItem)
-      this._activePolylineIndex = this._state.items.indexOf(polylineItem)
+      this._state.activePolylineIndex = this._state.items.indexOf(polylineItem)
 
       // right click to delete one
       google.maps.event.addListener(polyline, 'rightclick', () => {
         polyline.setMap(null)
         this._state.items.splice(this._state.items.indexOf(polylineItem), 1)
-        this._activePolylineIndex-- // one item has been removed, indexes shift down
+        this._state.activePolylineIndex-- // one item has been removed, indexes shift down
         this._nextShape = true // otherwise next click will populate the last polyline
       })
 
@@ -78,7 +79,7 @@ const PolylineTool = class extends Tool {
       return null
     } else {
       // add a point to the current polyline
-      this._state.items[this._activePolylineIndex].path.push(evt.latLng)
+      this._state.items[this._state.activePolylineIndex].path.push(evt.latLng)
     }
   }
 
@@ -91,6 +92,8 @@ const PolylineTool = class extends Tool {
       polyline.shape.setMap(null)
     })
     this._state.items = []
+    this._state.activePolylineIndex = null
+    this._nextShape = true
     console.info('polylines cleared')
   }
 

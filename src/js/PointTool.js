@@ -14,10 +14,7 @@ import Tool from 'Tool'
 export default class PointTool extends Tool {
   constructor (map, ctrl, options) {
     super(map, ctrl, 'point')
-    console.log(this._options)
-    console.log(options)
     this._options = jQuery.extend({}, this._options, options)
-    console.log(this._options)
   }
 
   /**
@@ -26,7 +23,7 @@ export default class PointTool extends Tool {
    * @return {String} The tips text
    */
   tipsText () {
-    return 'Click on the map to set draggable markers points. Right click on a marker to delete it'
+    return 'Click on the map to set draggable markers points. Right click on a marker to delete it.'
   }
 
   /**

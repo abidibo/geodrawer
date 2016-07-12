@@ -6,6 +6,8 @@ import PolylineTool from 'PolylineTool'
 import PolygonTool from 'PolygonTool'
 import CircleTool from 'CircleTool'
 
+require('../scss/base.scss')
+
 window.geodrawer = {
   ready: function (callback) {
     Dispatcher.register('geocoder-loaded', function () {

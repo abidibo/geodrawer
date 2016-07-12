@@ -27,7 +27,7 @@ export default class PolylineTool extends Tool {
    */
   tipsText () {
     return 'Click on the map to add polyline points, click the menu voice again to create a new polyline. ' +
-           'Right click on existing polylines to delete them'
+           'Right click on existing polylines to delete them.'
   }
 
   /**

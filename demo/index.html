@@ -3,11 +3,13 @@
   <head>
     <title>geodrawer</title>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyArAE-uBvCZTRaf_eaFn4umUdESmoUvoxM"></script>
-    <script type="text/javascript" src="../dist/geodrawer.js"></script>
   </head>
   <body>
     <h1>GeoDrawer FTW</h1>
-    <div id="map-canvas" style="width: 400px; height: 300px;"></div>
+    <script type="text/javascript" src="../dist/geodrawer.js"></script>
+    <div style="margin: auto; width: 70%;">
+        <div id="map-canvas" style="width: 100%; height: 300px;"></div>
+    </div>
     <script type="text/javascript">
       var cb = function () {
         var mymap = new geodrawer.Map('#map-canvas', {

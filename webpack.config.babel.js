@@ -1,7 +1,7 @@
 import webpack from 'webpack'
-var path = require('path')
+import path from 'path'
 
-module.exports = {
+const webpackConfig = {
   node: {
     fs: 'empty'
   },
@@ -25,24 +25,49 @@ module.exports = {
     filename: 'geodrawer.js'
   },
   // this for creating source maps
-  devtool: 'source-map',
-  plugins: [
-    new webpack.optimize.UglifyJsPlugin({minimize: true})
-  ],
-  module: {
-    loaders: [
-      {
-        test: /\.(js)$/,
-        exclude: /node_modules/,
-        loader: 'babel-loader',
-        query: {
-          presets: ['es2015', 'stage-0']
-        }
-      },
-      {
-        test: /\.json$/,
-        loader: 'json'
-      }
-    ]
-  }
+  devtool: 'source-map'
 }
+
+webpackConfig.plugins = [
+  new webpack.optimize.UglifyJsPlugin({minimize: true})
+]
+
+webpackConfig.module = {
+  loaders: []
+}
+
+// js loaders
+webpackConfig.module.loaders.push({
+  test: /\.(js)$/,
+  exclude: /node_modules/,
+  loader: 'babel-loader',
+  query: {
+    presets: ['es2015', 'stage-0']
+  }
+})
+
+// css loaders
+webpackConfig.module.loaders.push({
+  test: /\.scss/,
+  loader: 'style!css!sass'
+})
+
+// json loaders
+webpackConfig.module.loaders.push({
+  test: /\.json$/,
+  loader: 'json'
+})
+
+// File loaders
+webpackConfig.module.loaders.push(
+  {
+    test: /\.svg(\?.*)?$/,
+    loader: 'url?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=image/svg+xml'
+  },
+  {
+    test: /\.(png|jpg)$/,
+    loader: 'url?limit=8192'
+  }
+)
+
+export default webpackConfig

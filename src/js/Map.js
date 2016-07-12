@@ -6,6 +6,7 @@ const _dftOpts = {
   center: [45, 7],
   zoom: 8,
   tools: {},
+  fullscreen: true,
   clearMapCtrl: 'default',
   exportMapCtrl: 'default',
   exportMapCb: null,
@@ -50,6 +51,8 @@ const _dftOpts = {
  *    The object containing the tool's names and options to be activated
  *    when initializing the map.
  *    It's a shortcut to easily define set and active tools objects.
+ * @param {Number} [options.fullscreen=true]
+ *    Whether or not to enable fullscreen functionality
  * @param {Object} [options.tools.point=undefined]
  *    The point tool init object
  * @param {String|Element} [options.tools.point.ctrl=undefined]
@@ -115,7 +118,7 @@ export default class Map {
 
   constructor (canvas, options) {
     this._dom = {}
-    this._dom.canvas = jQuery(canvas)
+    this._dom.canvas = jQuery(canvas).addClass('geodrawer-map-canvas')
     // check canvas exists
     if (!this._dom.canvas.length) {
       throw new Error('Canvas container not found!')
@@ -127,7 +130,19 @@ export default class Map {
         width: this._dom.canvas.css('width')
       })
     this._dom.controllersContainer = jQuery('<div />', {'class': 'geodrawer-ctrls-container'})
-    this._dom.canvas.wrap(this._dom.container).before(this._dom.controllersContainer)
+    this._dom.toolsCtrlsContainer = jQuery('<div />', {'class': 'geodrawer-ctrls-tools-container'})
+    this._dom.actionsCtrlsContainer = jQuery('<div />', {'class': 'geodrawer-ctrls-actions-container'})
+    this._dom.geocoderCtrlsContainer = jQuery('<div />', {'class': 'geodrawer-ctrls-geocoder-container'})
+    this._dom.screenCtrlsContainer = jQuery('<div />', {'class': 'geodrawer-ctrls-screen-container'})
+    this._dom.controllersContainer.append(
+      this._dom.toolsCtrlsContainer,
+      this._dom.geocoderCtrlsContainer,
+      this._dom.actionsCtrlsContainer,
+      this._dom.screenCtrlsContainer
+    )
+    this._dom.container = this._dom.canvas.wrap(this._dom.container)
+      .before(this._dom.controllersContainer)
+      .parent()
 
     // let's extend default options
     this._options = jQuery.extend({}, _dftOpts, options)
@@ -160,7 +175,8 @@ export default class Map {
       geocoder: null,
       geocoderField: null,
       geocoderCenterButton: null,
-      geocoderDrawButton: null
+      geocoderDrawButton: null,
+      fullscreen: null
     }
 
     // check options!
@@ -169,12 +185,13 @@ export default class Map {
 
   /**
    * Processes the options object setting properly some class properties
+   * @memberof geodrawer.Map.prototype
    * @return void
    */
   _processOptions () {
     // init tools
     var self = this
-    this._supportedTools.forEach(
+    this._supportedTools.reverse().forEach(
       (toolName, index) => {
         if (self._options.tools.hasOwnProperty(toolName)) {
           var handler = null
@@ -199,7 +216,7 @@ export default class Map {
 
   /**
    * Initializes the google map and its events
-   * @memberof ajs.maps.gmapdraw.map.prototype
+   * @memberof geodrawer.Map.prototype
    * @return void
    */
   _initMap () {
@@ -241,12 +258,16 @@ export default class Map {
       this._setExportMapController()
     }
 
-    if (this._options.tipsMapCtrl) {
-      this._setTipsMapController()
-    }
-
     if (this._options.geocoderMapField) {
       this._setGeocoderMapFieldController()
+    }
+
+    if (this._options.fullscreen) {
+      this._setFullscreenController()
+    }
+
+    if (this._options.tipsMapCtrl) {
+      this._setTipsMapController()
     }
   }
 
@@ -270,9 +291,9 @@ export default class Map {
    */
   _setClearMapController () {
     if (this._options.clearMapCtrl === 'default') {
-      this._controllers.clearMap = jQuery('<div />', {'class': 'geodrawer-ctrls-clear_map'})
-        .text('clear map')
-       .appendTo(this._dom.controllersContainer)
+      this._controllers.clearMap = jQuery('<div />', {'class': 'geodrawer-ctrl-clear-map'})
+        .attr('title', 'clear map')
+        .appendTo(this._dom.actionsCtrlsContainer)
     } else if (this._options.clearMapCtrl) {
       this._controllers.clearMap = jQuery(this._options.clearMapCtrl)
       if (!this._controllers.clearMap) {
@@ -297,15 +318,15 @@ export default class Map {
   }
 
   /**
-   * @summary Sets the export map controller depending on the options.export_map_ctrl value
+   * @summary Sets the export map controller depending on the options.exportMapCtrl value
    * @memberof geodrawer.Map.prototype
    * @return void
    */
   _setExportMapController () {
     if (this._options.exportMapCtrl === 'default') {
-      this._controllers.exportMap = jQuery('<div />', {'class': 'gmapdraw-ctrls-export_map'})
-        .text('export map')
-        .appendTo(this._dom.controllersContainer)
+      this._controllers.exportMap = jQuery('<div />', {'class': 'geodrawer-ctrl-export-map'})
+        .attr('title', 'export map')
+        .appendTo(this._dom.actionsCtrlsContainer)
     } else if (this._options.exportMapCtrl) {
       this._controllers.exportMap = jQuery(this._options.exportMapCtrl)
       if (!this._controllers.exportMap.length) {
@@ -338,7 +359,7 @@ export default class Map {
    */
   _setTipsMapController () {
     if (this._options.tipsMapCtrl === 'default') {
-      this._controllers.tipsMap = jQuery('<div />', {'class': 'gmapdraw-ctrls-tips_map'})
+      this._controllers.tipsMap = jQuery('<div />', {'class': 'geodrawer-tips-map'})
         .appendTo(this._dom.controllersContainer)
     } else if (this._options.tipsMapCtrl) {
       this._controllers.tipsMap = jQuery(this._options.tipsMapCtrl)
@@ -370,27 +391,28 @@ export default class Map {
    */
   _setGeocoderMapFieldController () {
     this._controllers.geocoderField = jQuery('<input />', {
-      'class': 'gmapdraw-ctrls-geocoder_field',
+      'class': 'geodrawer-geocoder-field',
       type: 'text',
       placeholder: 'insert an address'
+    }).on('focus', () => {
+      this.updateTips('Write an address in the field, then center the map in the calculated point, ' +
+                      'or use it to draw the selected shape (acts as a click on the map).')
     })
 
-    this._controllers.geocoderCenterButton = jQuery('<input />', {
-      'class': 'gmapdraw-ctrls-geocoder_center_button',
-      type: 'button',
-      value: 'set map center'
+    this._controllers.geocoderCenterButton = jQuery('<div />', {
+      'class': 'geodrawer-ctrl-geocoder-center-btn',
+      title: 'center in geolocalized point'
     })
 
-    this._controllers.geocoderDrawButton = jQuery('<input />', {
-      'class': 'gmapdraw-ctrls-geocoder_draw_button',
-      type: 'button',
-      value: 'draw'
+    this._controllers.geocoderDrawButton = jQuery('<div />', {
+      'class': 'geodrawer-ctrl-geocoder-draw-btn',
+      title: 'draw the geolocalized point'
     })
 
     this._controllers.geocoderCenterButton.on('click', this.geocoderCenter.bind(this))
     this._controllers.geocoderDrawButton.on('click', this.geocoderDraw.bind(this))
 
-    this._dom.controllersContainer.append(
+    this._dom.geocoderCtrlsContainer.append(
       this._controllers.geocoderField,
       this._controllers.geocoderCenterButton,
       this._controllers.geocoderDrawButton
@@ -411,12 +433,41 @@ export default class Map {
   }
 
   /**
+   * @summary Sets the fullscreen controller
+   * @memberof geodrawer.Map.prototype
+   * @return void
+   */
+  _setFullscreenController () {
+    this._controllers.fullscreen = jQuery('<div />', {
+      'class': 'geodrawer-ctrl-fullscreen',
+      title: 'fullscreen'
+    }).appendTo(this._dom.screenCtrlsContainer)
+      .on('click', () => {
+        this._dom.container.toggleClass('geodrawer-fullscreen')
+        this._controllers.fullscreen.attr('title', this._controllers.fullscreen.attr('title') === 'fullscreen'
+          ? 'exit fullscreen'
+          : 'fullscreen')
+        google.maps.event.trigger(this._map, 'resize')
+      })
+  }
+
+  /**
+   * @summary Removes the fullscreen controller
+   * @memberof geodrawer.Map.prototype
+   * @return void
+   */
+  _removeFullscreenController () {
+    this._controllers.fullscreen.off()
+    this._controllers.fullscreen.remove()
+  }
+
+  /**
    * @summary Returns the init text shown in the tips controller
    * @memberof geodrawer.Map.prototype
    * @return {String} text The initial tip text
    */
   _initMapTips () {
-    return 'Displays help tips about drawing tools'
+    return 'Displays help tips about drawing tools.'
   }
 
   /**
@@ -502,6 +553,8 @@ export default class Map {
     if (tool != null && !this._state.tools.hasOwnProperty(tool.getToolName())) {
       throw new Error('Can\'t set the drawing tool since it\'s not active')
     }
+    Object.keys(this._state.tools).forEach((k) => this._state.tools[k].setUnselected())
+    tool.setSelected()
     this._state.drawingTool = tool
   }
 
@@ -529,7 +582,7 @@ export default class Map {
     if (!ctrl.length) {
       throw new Error('The given controller is not an element')
     }
-    ctrl.prependTo(this._dom.controllersContainer)
+    ctrl.prependTo(this._dom.toolsCtrlsContainer)
   }
 
   /**
@@ -564,9 +617,6 @@ export default class Map {
    * @description The google map class instance allows to customize direclty some map properties using
    *              the google.maps.Map public interface
    * @return {google.maps.Map} The google map instance
-   * @example
-   *   var mygmap = ajs.maps.gmapdraw.map.gmap();
-   *   mygmap.setCenter(new google.maps.LatLng(45, 7));
    */
   gmap () {
     return this._map
@@ -664,6 +714,21 @@ export default class Map {
     }
     this._options.tipsMapCtrl = ctrl
     this._setTipsMapController()
+  }
+
+  /**
+   * @summary Sets the fullscreen option
+   * @memberof geodrawer.Map.prototype
+   * @param {Boolean} activate Whether or not to activate the fullscreen functionality
+   * @return void
+   */
+  setFullscreen (activate) {
+    this._options.fullscreen = activate
+    if (!activate) {
+      this._removeFullscreenController()
+    } else {
+      this._setFullscreenController()
+    }
   }
 
   /**

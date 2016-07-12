@@ -51,8 +51,9 @@ export default class {
     } else {
       // default
       this._ctrl = jQuery('<div />', {
-        'class': 'gmapdraw-ctrl-' + this._toolName + '-tool'
-      }).text(this._toolName)
+        'class': 'geodrawer-ctrl-' + this._toolName + '-tool',
+        title: this._toolName + ' tool'
+      })
       this._map.addDefaultCtrl(this._ctrl)
     }
   }
@@ -163,17 +164,35 @@ export default class {
    */
   setDrawing () {
     this.prepareTool()
+    this._map.updateTips(this.tipsText())
     console.info('geodrawer: drawing tool: ' + this._toolName)
     this._map.setDrawingTool(this)
   }
 
   /**
    * @summary Prepares the current drawing tool
+   * @description Empty because at the moment has to do nothing, but it's a place where some things
+   *              can be done in the future, I suppose.
    * @memberof geodrawer.Tool.prototype
    * @return void
    */
-  prepareTool () {
-    this._map.updateTips(this.tipsText())
+  prepareTool () {}
+
+  /**
+   * @summary Sets the css selected class
+   * @memberof geodrawer.Tool.prototype
+   * @return void
+   */
+  setSelected () {
+    this._ctrl.addClass('geodrawer-selected')
   }
 
+  /**
+   * @summary Removes the css selected class
+   * @memberof geodrawer.Tool.prototype
+   * @return void
+   */
+  setUnselected () {
+    this._ctrl.removeClass('geodrawer-selected')
+  }
 }

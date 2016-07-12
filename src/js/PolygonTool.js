@@ -27,7 +27,7 @@ export default class PolygonTool extends Tool {
    */
   tipsText () {
     return 'Click on the map to add polygon\'s vertices, click the menu voice again to create a new shape.' +
-           ' Right click on existing polygons to delete them'
+           ' Right click on existing polygons to delete them.'
   }
 
   /**

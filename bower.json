@@ -1,0 +1,19 @@
+{
+  "name": "geodrawer",
+  "version": "0.1.0",
+  "homepage": "https://github.com/abidibo/geodrawer",
+  "authors": [
+    "abidibo <abidibo@gmail.com>"
+  ],
+  "description": "Google Maps Drawer Library",
+  "main": "dist/geodrawer.min.js",
+  "moduleType": [
+    "es6",
+    "globals"
+  ],
+  "keywords": [
+    "maps",
+    "google-maps"
+  ],
+  "license": "MIT"
+}

@@ -22,7 +22,7 @@ const webpackConfig = {
   output: {
     path: path.join(__dirname, 'dist'),
     publicPath: '/dist',
-    filename: 'geodrawer.js'
+    filename: 'geodrawer.min.js'
   },
   // this for creating source maps
   devtool: 'source-map'

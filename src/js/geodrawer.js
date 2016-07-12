@@ -21,3 +21,5 @@ window.geodrawer = {
   PolygonTool: PolygonTool,
   CircleTool: CircleTool
 }
+
+export default window.geodrawer

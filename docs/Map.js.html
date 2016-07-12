@@ -1,4 +1,32 @@
-import {capitalize, sprintf} from 'utils'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Map.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Map.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import {capitalize, sprintf} from 'utils'
 import Tool from 'Tool'
 
 // default options
@@ -17,26 +45,26 @@ const _dftOpts = {
 /**
  * Google maps drawing class, provides tools for drawing over a google map canvas, and export drawn data.
  *
- *      <p>This class handles the drawing tools used to draw over a google map and allows
- *      data exportation.</p>
- *      <p>The map manages also some controllers</p>
- *      <ul>
- *      <li>clear map controller</li>
- *      <li>export map controller</li>
- *      <li>geocoder text field controller</li>
- *      <li>tips controller</li>
- *      </ul>
- *      <p>Moreover every drawing tool has its own controller, which may be specifically set or used in
- *      its default form.</p>
- *      <p>Each map controller may be specified as custom, may be removed by setting the
- *      related option to <code>null</code> or used in its default form.</p>
- *      <p>Once instantiated the class and set the tools by options or instantiating direclty
+ *      &lt;p>This class handles the drawing tools used to draw over a google map and allows
+ *      data exportation.&lt;/p>
+ *      &lt;p>The map manages also some controllers&lt;/p>
+ *      &lt;ul>
+ *      &lt;li>clear map controller&lt;/li>
+ *      &lt;li>export map controller&lt;/li>
+ *      &lt;li>geocoder text field controller&lt;/li>
+ *      &lt;li>tips controller&lt;/li>
+ *      &lt;/ul>
+ *      &lt;p>Moreover every drawing tool has its own controller, which may be specifically set or used in
+ *      its default form.&lt;/p>
+ *      &lt;p>Each map controller may be specified as custom, may be removed by setting the
+ *      related option to &lt;code>null&lt;/code> or used in its default form.&lt;/p>
+ *      &lt;p>Once instantiated the class and set the tools by options or instantiating direclty
  *      the drawing tool classes and adding them to the map,
- *      see {@link Map#addTool}, call the render method in order to render the widget.<br />
+ *      see {@link Map#addTool}, call the render method in order to render the widget.&lt;br />
  *      It is possible to continue configuring the widget adding or removing tools and
- *      customize the google map instance which is returned by the {@link Map#gmap} method.</p>
- *      <p>When defining specific map controllers, be sure to make them handle the proper map methods.</p>
- *      <p>Very important: be sure to load the google maps library yourself in the head of the document!</p>
+ *      customize the google map instance which is returned by the {@link Map#gmap} method.&lt;/p>
+ *      &lt;p>When defining specific map controllers, be sure to make them handle the proper map methods.&lt;/p>
+ *      &lt;p>Very important: be sure to load the google maps library yourself in the head of the document!&lt;/p>
  *
  *
  * @example
@@ -100,11 +128,11 @@ const Map = class {
    *    The tool options object, see {@link CircleTool} for available properties
    * @param {String|Element} [options.clearMapCtrl='default']
    *    The clear map controller (clears all drawings over the map).
-   *    If 'default' the built-in controller is used, if <code>null</code> the clear map
+   *    If 'default' the built-in controller is used, if &lt;code>null&lt;/code> the clear map
    *    functionality is removed. If id attribute or an element the clear map functionality is attached to the element.
    * @param {String|Element} [options.exportMapCtrl='default']
    *    The export map controller (exports all shapes drawed over the map).
-   *    If 'default' the built-in controller is used, if <code>null</code> the export map
+   *    If 'default' the built-in controller is used, if &lt;code>null&lt;/code> the export map
    *    functionality is removed. If id attribute or an element the clear map functionality is attached to the element.
    * @param {Function} [options.exportMapCb=null]
    *    The callback function to call when the export map button is pressed.
@@ -116,7 +144,7 @@ const Map = class {
    *    (exactly as click over the map in a lat,lng point).
    * @param {String|Element} [options.tipsMapCtrl='default']
    *    The help tips map controller (shows tips about drawing tools).
-   *    If 'default' the built-in controller is used, if <code>null</code> the tips box is not shown,
+   *    If 'default' the built-in controller is used, if &lt;code>null&lt;/code> the tips box is not shown,
    *    if id attribute or an element the functionality is attached to the element.
    */
   constructor (canvas, options) {
@@ -128,15 +156,15 @@ const Map = class {
     }
 
     // wrap canvas inside a container and add controllers container
-    this._dom.container = jQuery('<div />', {'class': 'geodrawer-container'})
+    this._dom.container = jQuery('&lt;div />', {'class': 'geodrawer-container'})
       .css({
         width: this._dom.canvas.css('width')
       })
-    this._dom.controllersContainer = jQuery('<div />', {'class': 'geodrawer-ctrls-container'})
-    this._dom.toolsCtrlsContainer = jQuery('<div />', {'class': 'geodrawer-ctrls-tools-container'})
-    this._dom.actionsCtrlsContainer = jQuery('<div />', {'class': 'geodrawer-ctrls-actions-container'})
-    this._dom.geocoderCtrlsContainer = jQuery('<div />', {'class': 'geodrawer-ctrls-geocoder-container'})
-    this._dom.screenCtrlsContainer = jQuery('<div />', {'class': 'geodrawer-ctrls-screen-container'})
+    this._dom.controllersContainer = jQuery('&lt;div />', {'class': 'geodrawer-ctrls-container'})
+    this._dom.toolsCtrlsContainer = jQuery('&lt;div />', {'class': 'geodrawer-ctrls-tools-container'})
+    this._dom.actionsCtrlsContainer = jQuery('&lt;div />', {'class': 'geodrawer-ctrls-actions-container'})
+    this._dom.geocoderCtrlsContainer = jQuery('&lt;div />', {'class': 'geodrawer-ctrls-geocoder-container'})
+    this._dom.screenCtrlsContainer = jQuery('&lt;div />', {'class': 'geodrawer-ctrls-screen-container'})
     this._dom.controllersContainer.append(
       this._dom.toolsCtrlsContainer,
       this._dom.geocoderCtrlsContainer,
@@ -257,7 +285,7 @@ const Map = class {
       this._setClearMapController()
     }
 
-    if (this._options.exportMapCtrl && this._options.exportMapCb) {
+    if (this._options.exportMapCtrl &amp;&amp; this._options.exportMapCb) {
       this._setExportMapController()
     }
 
@@ -294,7 +322,7 @@ const Map = class {
    */
   _setClearMapController () {
     if (this._options.clearMapCtrl === 'default') {
-      this._controllers.clearMap = jQuery('<div />', {'class': 'geodrawer-ctrl-clear-map'})
+      this._controllers.clearMap = jQuery('&lt;div />', {'class': 'geodrawer-ctrl-clear-map'})
         .attr('title', 'clear map')
         .appendTo(this._dom.actionsCtrlsContainer)
     } else if (this._options.clearMapCtrl) {
@@ -327,7 +355,7 @@ const Map = class {
    */
   _setExportMapController () {
     if (this._options.exportMapCtrl === 'default') {
-      this._controllers.exportMap = jQuery('<div />', {'class': 'geodrawer-ctrl-export-map'})
+      this._controllers.exportMap = jQuery('&lt;div />', {'class': 'geodrawer-ctrl-export-map'})
         .attr('title', 'export map')
         .appendTo(this._dom.actionsCtrlsContainer)
     } else if (this._options.exportMapCtrl) {
@@ -360,7 +388,7 @@ const Map = class {
    */
   _setTipsMapController () {
     if (this._options.tipsMapCtrl === 'default') {
-      this._controllers.tipsMap = jQuery('<div />', {'class': 'geodrawer-tips-map'})
+      this._controllers.tipsMap = jQuery('&lt;div />', {'class': 'geodrawer-tips-map'})
         .appendTo(this._dom.controllersContainer)
     } else if (this._options.tipsMapCtrl) {
       this._controllers.tipsMap = jQuery(this._options.tipsMapCtrl)
@@ -391,7 +419,7 @@ const Map = class {
    * @return void
    */
   _setGeocoderMapFieldController () {
-    this._controllers.geocoderField = jQuery('<input />', {
+    this._controllers.geocoderField = jQuery('&lt;input />', {
       'class': 'geodrawer-geocoder-field',
       type: 'text',
       placeholder: 'insert an address'
@@ -400,12 +428,12 @@ const Map = class {
                       'or use it to draw the selected shape (acts as a click on the map).')
     })
 
-    this._controllers.geocoderCenterButton = jQuery('<div />', {
+    this._controllers.geocoderCenterButton = jQuery('&lt;div />', {
       'class': 'geodrawer-ctrl-geocoder-center-btn',
       title: 'center in geolocalized point'
     })
 
-    this._controllers.geocoderDrawButton = jQuery('<div />', {
+    this._controllers.geocoderDrawButton = jQuery('&lt;div />', {
       'class': 'geodrawer-ctrl-geocoder-draw-btn',
       title: 'draw the geolocalized point'
     })
@@ -439,7 +467,7 @@ const Map = class {
    * @return void
    */
   _setFullscreenController () {
-    this._controllers.fullscreen = jQuery('<div />', {
+    this._controllers.fullscreen = jQuery('&lt;div />', {
       'class': 'geodrawer-ctrl-fullscreen',
       title: 'fullscreen'
     }).appendTo(this._dom.screenCtrlsContainer)
@@ -546,7 +574,7 @@ const Map = class {
    * @return void
    */
   setDrawingTool (tool) {
-    if (tool != null && !this._state.tools.hasOwnProperty(tool.getToolName())) {
+    if (tool != null &amp;&amp; !this._state.tools.hasOwnProperty(tool.getToolName())) {
       throw new Error('Can\'t set the drawing tool since it\'s not active')
     }
     Object.keys(this._state.tools).forEach((k) => this._state.tools[k].setUnselected())
@@ -641,7 +669,7 @@ const Map = class {
    * @summary Sets the clear map controller
    * @param {String|Element} ctrl
    *    The clear map controller.
-   *    If 'default' the built-in controller is used, if <code>null</code> the clear map
+   *    If 'default' the built-in controller is used, if &lt;code>null&lt;/code> the clear map
    *    functionality is removed. If selctor or jQuery element the clear map functionality
    *    is attached to the element.
    * @return void
@@ -658,7 +686,7 @@ const Map = class {
    * @summary Sets the export map controller
    * @param {String|Element} ctrl
    *    The clear map controller.
-   *    If 'default' the built-in controller is used, if <code>null</code> the export map
+   *    If 'default' the built-in controller is used, if &lt;code>null&lt;/code> the export map
    *    functionality is removed. If selctor or jQuery element the export map functionality
    *    is attached to the element.
    * @return void
@@ -689,7 +717,7 @@ const Map = class {
    * @summary Sets the tips map controller
    * @param {String|Element} ctrl
    *    The help tips map controller (shows tips about drawing tools).
-   *    If 'default' the built-in controller is used, if <code>null</code> the tips box is not shown,
+   *    If 'default' the built-in controller is used, if &lt;code>null&lt;/code> the tips box is not shown,
    *    if selector or jQuery element the functionality is attached to the element
    * @return void
    */
@@ -824,3 +852,26 @@ const Map = class {
 }
 
 export default Map
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-geodrawer.html">geodrawer</a></li></ul><h3>Classes</h3><ul><li><a href="CircleTool.html">CircleTool</a></li><li><a href="Map.html">Map</a></li><li><a href="PointTool.html">PointTool</a></li><li><a href="PolygonTool.html">PolygonTool</a></li><li><a href="PolylineTool.html">PolylineTool</a></li><li><a href="Tool.html">Tool</a></li></ul><h3>Namespaces</h3><ul><li><a href="EventDispatcher.html">EventDispatcher</a></li><li><a href="Loader.html">Loader</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Jul 12 2016 15:34:54 GMT+0200 (CEST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

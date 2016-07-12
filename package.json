@@ -5,7 +5,8 @@
   "main": "geodrawer.js",
   "scripts": {
     "compile": "./node_modules/webpack/bin/webpack.js -p",
-    "dev": "webpack-dev-server --progress --colors --config ./webpack.config.babel.js"
+    "dev": "webpack-dev-server --progress --colors --config ./webpack.config.babel.js",
+    "docs": "./node_modules/jsdoc/jsdoc.js ./src/js/* -R README.md -d ./docs"
   },
   "author": "abidibo",
   "license": "MIT",
@@ -34,6 +35,7 @@
     "eslint-plugin-flow-vars": "^0.4.0",
     "eslint-plugin-promise": "^1.3.2",
     "eslint-plugin-standard": "^1.3.2",
+    "jsdoc": "^3.4.0",
     "webpack-dev-server": "^1.14.1"
   }
 }

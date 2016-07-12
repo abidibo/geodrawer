@@ -36,3 +36,107 @@ or use bower ;)
 ### How to
 
 Include the min library (`dist/geodrawer.min`) in the head of your document or in the body, or load it async, it's up to you
+
+    <script type="text/javascript" src="bower_components/geodrawer/dist/geodrawer.min.js"></script>
+
+Define the map canvas container somewhere in the document:
+
+    <div id="map-canvas"></div>
+
+Instantiate the geodrawer.Map class passing some options, then call its render method, all inside a callback passed to geodrawer.ready(), in order to be sure the library is fully loaded:
+
+    <script>
+      var cb = function () {
+        var mymap = new geodrawer.Map('#map-canvas', {
+          tools: {
+            point: {
+              options: {
+                maxItemsAllowed: 3,
+              }
+            },
+            polyline: {},
+            polygon: {},
+            circle: {}
+          },
+          exportMapCb: function () {
+            console.log('exported data: ', arguments);
+          }
+        });
+        mymap.render();
+      }
+      geodrawer.ready(cb);
+    </script>
+
+Need to import existing data?
+
+    ...
+    mymap.render()
+    mymap.importMap({
+      point: [{lat: 45, lng: 7}],
+      polyline: [
+        [{lat: 44, lng: 7}, {lat: 44.3, lng: 7.2}]
+      ]
+    });
+    ...
+
+The library provides some classes:
+
+- Loader
+- EventDispatcher
+- Map
+- Tool (something like an abstract class)
+- PointTool
+- PolylineTool
+- PolygonTool
+- CircleTool
+
+each which its own public methods (actually are all public, but some of them are not meant to be, they start with an underscore char).
+Surf the documentation for full reference about the library, or look at the demo page.
+
+Every tool can be customize at runtime, you can add or remove tools, change options and so on...
+
+#### Need to use custom controllers?
+
+If you have already an interface designed with buttons to export data or clear the map, that's not a problem, you can provide your own controllers for all the tools and almost all the functionalities; the library will manage (attach and detach) the events itself.
+
+## Development
+
+The repository comes with a development environment involving:
+
+- node
+- webpack
+- babel
+
+The code is written following the es2015 and es2016 standards, babel is smart enough to produce a browser compatible bundle.
+
+Get started by cloning the repository and running
+
+    $ npm install
+
+To start development:
+
+    $ npm run dev
+
+A server is started on http://localhost/8080, which serves the root directory. No need to run it again, changes in files are detected and the bundle is re-generated automatically, just reload the page.
+
+To compile for production:
+
+    $ npm run compile
+
+To generate the library reference:
+
+    $ npm run docs
+
+
+## TODO
+
+- tests
+- dispatch events for almost everything
+
+## License
+
+[MIT License](https://opensource.org/licenses/MIT), my friend.
+
+## Credits
+
+This library was developed by [abidibo](http://www.abidibo.net) for [OTTO srl](http://www.otto.to.it)

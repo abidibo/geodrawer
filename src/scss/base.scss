@@ -15,12 +15,15 @@ $tips-border-color: #444;
   .geodrawer-ctrls-geocoder-container,
   .geodrawer-ctrls-screen-container {
     float: left;
-    padding: 5px 10px;
 
     &::after {
       clear: both;
       content: '';
       display: block;
+    }
+
+    * {
+      margin: 5px;
     }
   }
 

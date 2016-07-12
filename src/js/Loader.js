@@ -2,21 +2,28 @@ import Dispatcher from 'EventDispatcher'
 
 /**
  * Library loader
+ *
+ * <p>This library requires google maps API v3 and jQuery, this loader assures that google maps API
+ * are available and loads jQuery from cdn if not already loaded in the document. When requirements
+ * are satisfied the callback passed to the {@link geodrawer#ready} method is invoked</p>
+ * @namespace
  */
 const Loader = {
   /**
    * Loads the library and emits an event when loaded
-   * The event emitted is 'geocoder-loaded'
+   * The event emitted is 'geodrawer-loaded'
+   * @memberof Loader
    */
   load: function () {
     this.checkGoogleMapsApi()
     this.requirejQuery(() => {
       console.info('geodrawer: library is ready')
-      Dispatcher.emit('geocoder-loaded')
+      Dispatcher.emit('geodrawer-loaded')
     })
   },
   /**
    * Checks if the google maps API is loaded
+   * @memberof Loader
    */
   checkGoogleMapsApi: function () {
     if (!(typeof window.google === 'object' && typeof window.google.maps === 'object')) {
@@ -26,6 +33,7 @@ const Loader = {
   },
   /**
    * Checks if jQuery is loaded, if not loads it, and then execute the cb
+   * @memberof Loader
    * @param {Function} then callback to execute after jQuery is fully loaded
    */
   requirejQuery (then) {

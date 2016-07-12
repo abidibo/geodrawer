@@ -1,14 +1,63 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>geodrawer</title>
+    <title>geodrawer base demo</title>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyArAE-uBvCZTRaf_eaFn4umUdESmoUvoxM"></script>
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?skin=sons-of-obsidian"></script>
+    <style>
+      body {
+        font-family: sans-serif;
+      }
+      pre {
+        padding: 16px;
+      }
+    </style>
   </head>
   <body>
-    <h1>GeoDrawer FTW</h1>
     <script type="text/javascript" src="../dist/geodrawer.min.js"></script>
     <div style="margin: auto; width: 70%;">
+        <h1>GeoDrawer Base Demo</h1>
+        <p><a href="./custom.html">See the custom controllers example</a></p>
+        <p>Simple usage of geodrawer library without custom fields. A set of initial data is imported in the map.</p>
         <div id="map-canvas" style="width: 100%; height: 300px;"></div>
+        <div style="margin-top: 20px; border: 1px dotted #eee; padding: 16px;">
+          <p><b>Exported data:</b></p>
+          <div id="exported-data">Click the export icon!</div>
+        </div>
+
+        <h2>js code:</h2>
+        <pre class="prettyprint linenums">
+var cb = function () {
+  var mymap = new geodrawer.Map('#map-canvas', {
+    tools: {
+      point: {
+        options: {
+          maxItemsAllowed: 5,
+        }
+      },
+      polyline: {
+        options: {
+          maxItemsAllowed: 2,
+        }
+      },
+      polygon: {},
+      circle: {}
+    },
+    exportMapCb: function (data) {
+      console.log(arguments);
+      jQuery('#exported-data').html(JSON.stringify(data))
+    }
+  });
+  mymap.render();
+  mymap.importMap({
+    point: [{lat: 45, lng: 7}],
+    polyline: [
+      [{lat: 44, lng: 7}, {lat: 44.3, lng: 7.2}]
+    ]
+  });
+}
+geodrawer.ready(cb);
+        </pre>
     </div>
     <script type="text/javascript">
       var cb = function () {
@@ -24,12 +73,12 @@
                 maxItemsAllowed: 2,
               }
             },
-            polygon: {
-            },circle: {}
+            polygon: {},
+            circle: {}
           },
-          exportMapCb: function () {
-            console.log(this);
+          exportMapCb: function (data) {
             console.log(arguments);
+            jQuery('#exported-data').html(JSON.stringify(data))
           }
         });
         mymap.render();

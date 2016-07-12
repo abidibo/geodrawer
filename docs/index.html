@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Home</h1>
+
+    
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><h1>geodrawer</h1><p>Hello folks, this is a js library designed to let an user easily draw shapes over a google map and import/export them in order to make something useful, i.e. save them to a database engine.</p>
+<p>Its simplest usage scenario is when you need to geolocalize some entities and save such info in the database, along with all other stuff (name, description and so on...)</p>
+<p>It was designed with the simplicity of usage and integration as primary focus, so that it can be integrated and used in any web application backoffice with no pain:</p>
+<ul>
+<li>no css files involved</li>
+<li>no static assets involved</li>
+<li>just source a js file and instantiate the library</li>
+</ul>
+<h2>Features</h2><p>Some features:</p>
+<ul>
+<li>draw shapes over the map: points, polylines, polygons, circles.</li>
+<li>set a maximum number of drawable shapes per type</li>
+<li>use the geodecoder service to center the map or draw a point</li>
+<li>clear or export the map (the drawn shapes)</li>
+<li>fullscreen functionality</li>
+<li>import shapes and edit them before exporting again</li>
+</ul>
+<h2>Usage</h2><h3>Installation</h3><p>Just download or clone the repo</p>
+<pre class="prettyprint source"><code>$ git clone https://github.com/abidibo/geodrawer.git</code></pre><p>or use bower ;)</p>
+<pre class="prettyprint source"><code>$ bower install geodrawer</code></pre><h3>How to</h3><p>Include the min library (<code>dist/geodrawer.min</code>) in the head of your document or in the body, or load it async, it's up to you</p>
+<pre class="prettyprint source"><code>&lt;script type=&quot;text/javascript&quot; src=&quot;bower_components/geodrawer/dist/geodrawer.min.js&quot;>&lt;/script></code></pre><p>Define the map canvas container somewhere in the document:</p>
+<pre class="prettyprint source"><code>&lt;div id=&quot;map-canvas&quot;>&lt;/div></code></pre><p>Instantiate the geodrawer.Map class passing some options, then call its render method, all inside a callback passed to geodrawer.ready(), in order to be sure the library is fully loaded:</p>
+<pre class="prettyprint source"><code>&lt;script>
+  var cb = function () {
+    var mymap = new geodrawer.Map('#map-canvas', {
+      tools: {
+        point: {
+          options: {
+            maxItemsAllowed: 3,
+          }
+        },
+        polyline: {},
+        polygon: {},
+        circle: {}
+      },
+      exportMapCb: function () {
+        console.log('exported data: ', arguments);
+      }
+    });
+    mymap.render();
+  }
+  geodrawer.ready(cb);
+&lt;/script></code></pre><p>Need to import existing data?</p>
+<pre class="prettyprint source"><code>...
+mymap.render()
+mymap.importMap({
+  point: [{lat: 45, lng: 7}],
+  polyline: [
+    [{lat: 44, lng: 7}, {lat: 44.3, lng: 7.2}]
+  ]
+});
+...</code></pre><p>The library provides some classes:</p>
+<ul>
+<li>Loader</li>
+<li>EventDispatcher</li>
+<li>Map</li>
+<li>Tool (something like an abstract class)</li>
+<li>PointTool</li>
+<li>PolylineTool</li>
+<li>PolygonTool</li>
+<li>CircleTool</li>
+</ul>
+<p>each which its own public methods (actually are all public, but some of them are not meant to be, they start with an underscore char).
+Surf the documentation for full reference about the library, or look at the demo page.</p>
+<p>Every tool can be customize at runtime, you can add or remove tools, change options and so on...</p>
+<h4>Need to use custom controllers?</h4><p>If you have already an interface designed with buttons to export data or clear the map, that's not a problem, you can provide your own controllers for all the tools and almost all the functionalities; the library will manage (attach and detach) the events itself.</p>
+<h2>Development</h2><p>The repository comes with a development environment involving:</p>
+<ul>
+<li>node</li>
+<li>webpack</li>
+<li>babel</li>
+</ul>
+<p>The code is written following the es2015 and es2016 standards, babel is smart enough to produce a browser compatible bundle.</p>
+<p>Get started by cloning the repository and running</p>
+<pre class="prettyprint source"><code>$ npm install</code></pre><p>To start development:</p>
+<pre class="prettyprint source"><code>$ npm run dev</code></pre><p>A server is started on http://localhost/8080, which serves the root directory. No need to run it again, changes in files are detected and the bundle is re-generated automatically, just reload the page.</p>
+<p>To compile for production:</p>
+<pre class="prettyprint source"><code>$ npm run compile</code></pre><p>To generate the library reference:</p>
+<pre class="prettyprint source"><code>$ npm run docs</code></pre><h2>TODO</h2><ul>
+<li>tests</li>
+<li>dispatch events for almost everything</li>
+</ul>
+<h2>License</h2><p><a href="https://opensource.org/licenses/MIT">MIT License</a>, my friend.</p>
+<h2>Credits</h2><p>This library was developed by <a href="http://www.abidibo.net">abidibo</a> for <a href="http://www.otto.to.it">OTTO srl</a></p></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-geodrawer.html">geodrawer</a></li></ul><h3>Classes</h3><ul><li><a href="CircleTool.html">CircleTool</a></li><li><a href="Map.html">Map</a></li><li><a href="PointTool.html">PointTool</a></li><li><a href="PolygonTool.html">PolygonTool</a></li><li><a href="PolylineTool.html">PolylineTool</a></li><li><a href="Tool.html">Tool</a></li></ul><h3>Namespaces</h3><ul><li><a href="EventDispatcher.html">EventDispatcher</a></li><li><a href="Loader.html">Loader</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Jul 12 2016 15:34:54 GMT+0200 (CEST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

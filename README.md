@@ -19,6 +19,7 @@ Some features:
 - use the geodecoder service to center the map or draw a point
 - clear or export the map (the drawn shapes)
 - fullscreen functionality
+- responsive
 - import shapes and edit them before exporting again
 
 ## Usage

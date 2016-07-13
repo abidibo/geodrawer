@@ -11,6 +11,18 @@
           crossorigin="anonymous"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.2/js/tether.min.js"></script>
         <script src="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/js/bootstrap.js"></script>
+        <style>
+            .img-responsive {
+                max-width: 100%;
+            }
+            .text-center {
+                text-align: center;
+            }
+            footer {
+                background: #f6f6f6;
+                    padding: 16px 0 1px;
+            }
+        </style>
     </head>
     <body>
         <nav class="navbar navbar-dark bg-inverse">
@@ -20,22 +32,58 @@
                     <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="https://github.com/abidibo/geodrawer">Repository</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="./docs/index.html">Reference</a>
                 </li>
             </ul>
         </nav>
-        <div class="container">
-            <h1 style="margin: 20px 0;">geodrawer</h1>
-            <p>The perfect library to use in the admin area of a modern web application in order to provide geolocalization info to all kind of entities.<br />
-            Highly customizable and written focusing on the ease of use, can be easily integrated inside every project.</p>
-            <p>No css or static assets import, only a single js file (around 50 kb).</p>
-            <p class="alert alert-info">For info and installation guide please read the <a href="./docs/index.html">reference</a>.</p>
-            <h2>Demo</h2>
-            <ul>
-                <li><a href="./demo/basic.html">Basic</a></li>
-                <li><a href="./demo/custom-controllers.html">Custom controllers</a></li>
-                <li><a href="./demo/advanced.html">Advanced</a></li>
-            </ul>
+        <div class="jumbotron">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-5">
+                        <h1 style="margin: 20px 0;">geodrawer</h1>
+                        <p>The perfect library to use in the admin area of a modern web application in order to provide geolocalization info to all kind of entities.<br />
+                        Highly customizable, <b>responsive</b> and written focusing on the ease of use, can be easily integrated inside every project.</p>
+                        <p>No css or static assets import, only a single js file (around 60 kb).</p>
+                    </div>
+                    <div class="col-md-7">
+                        <img class="img-responsive" src="./img/screenshot.png" />
+                    </div>
+                </div>
+            </div>
         </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h2>Download</h2>
+                    <p>Download/clone <a href="https://github.com/abidibo/geodrawer">the repository</a>, or use bower if you prefer:</p>
+                    <pre>$ bower install geodrawer</pre>
+                    <h2>How To and Demo</h2>
+                    <p>Check out the <a href="https://github.com/abidibo/geodrawer/blob/master/README.md">README</a> for a 2 minutes working example, and surf the demo pages.</p>
+                    <ul>
+                        <li><a href="./demo/basic.html">Basic</a></li>
+                        <li><a href="./demo/custom-controllers.html">Custom controllers</a></li>
+                        <li><a href="./demo/advanced.html">Advanced</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h2>Full reference</h2>
+                    <p>Check out the jsdoc auto-generated reference to surf all the available public methods</p>
+                    <p><a href="http://localhost/geodrawer/docs/index.html" class="btn btn-primary">reference &#187;</a></p>
+                    <h2>License</h2>
+                    <a href="http://opensource.org/licenses/mit-license.php">
+                        <img style="width: 100px;" src="http://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/License_icon-mit-2.svg/256px-License_icon-mit-2.svg.png" />
+                    </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer>
+            <p class="text-center">
+                geodrawer, copyright &copy; 2016 OTTO srl, developed by <a href="http://www.abidibo.net">abidibo</a>
+            </p>
+        </footer>
     </body>
 </html>

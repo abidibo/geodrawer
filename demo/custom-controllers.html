@@ -32,29 +32,39 @@
     <body>
       <div style="margin: auto; width: 70%;">
         <h1>GeoDrawer Custom Controllers Demo</h1>
-        <p><a href="../index.html">Home</a> | <a href="./basic.html">See the basic example</a></p>
+        <p>
+            <a href="../index.html">Home</a> | 
+            <a href="./basic.html">See the basic example</a> |
+            <a href="./advanced.html">See the advanced example</a>
+        </p>
         <p>This is a more advanced example.</p>
         <p>Almost every controller of the library can be customized, in order to increase the field of applicability of the library. Maybe 
           you have to use it in an already developed interface, so you can use your own controllers and all the events are binded automatically.</p>
         <p>With a bit of bootstrap, FontAwesome and friends, you can build your preferred interface.</p>
-        <div id="map-canvas" style="width: 100%; height: 300px;"></div>
-        <hr />
-        <div class="">
-          <table class="alert alert-info">
-            <tr>
-              <td><i class="fa fa-info fa-2x" style="color: blue"></i></td>
-              <td class="col-md-11"><p id="tips-ctrl"></p></td>
-            </tr>
-          </table>
+        <p>In this example I've used bootstrap 4-dev along with a custom jQuery version (the library will use that one).</p>
+        <div class="row">
+            <div class="col-md-6">
+                <div id="map-canvas" style="width: 100%; height: 300px;"></div>
+            </div>
+            <div class="col-md-6">
+                <div class="">
+                  <table class="table alert alert-info">
+                    <tr>
+                      <td><i class="fa fa-info-circle fa-2x" style="color: blue"></i></td>
+                      <td class="col-md-11"><p id="tips-ctrl"></p></td>
+                    </tr>
+                  </table>
+                </div>
+                <hr />
+                <p>Here we use custom controllers</p>
+                <button class="btn btn-primary" id="point-ctrl">point</button>
+                <button class="btn btn-primary" id="circle-ctrl">circle</button>
+                <hr />
+                <p>Custom clear and export buttons</p>
+                <i class="fa fa-remove fa-2x pointer" id="clear-ctrl"></i>
+                <i class="fa fa-save fa-2x pointer" id="export-ctrl"></i>
+            </div>
         </div>
-        <hr />
-        <p>Here we use custom controllers</p>
-        <button class="btn btn-primary" id="point-ctrl">point</button>
-        <button class="btn btn-primary" id="circle-ctrl">circle</button>
-        <hr />
-        <p>Custom clear and export buttons</p>
-        <i class="fa fa-remove fa-2x pointer" id="clear-ctrl"></i>
-        <i class="fa fa-save fa-2x pointer" id="export-ctrl"></i>
         <hr />
         <h2>js code:</h2>
         <pre class="prettyprint linenums">
@@ -83,6 +93,14 @@ var cb = function () {
 
 geodrawer.ready(cb);
         </pre>
+        <h2>css code:</h2>
+        <p>To manage the active state of the tools controllers</p>
+        <pre class="prettyprint linenums">
+.geodrawer-selected {
+  background: red !important;
+}
+        </pre>
+
       </div>
       <script type="text/javascript">
           var cb = function () {

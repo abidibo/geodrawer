@@ -177,7 +177,7 @@ const Tool = class {
    * @summary Prepares the current drawing tool
    * @description Empty because at the moment has to do nothing, but it's a place where some things
    *              can be done in the future, I suppose.
-   * @return void
+   * @return {Tool} instance
    */
   prepareTool () {}
 
@@ -187,14 +187,16 @@ const Tool = class {
    */
   setSelected () {
     this._ctrl.addClass('geodrawer-selected')
+    return this
   }
 
   /**
    * @summary Removes the css selected class
-   * @return void
+   * @return {Tool} instance
    */
   setUnselected () {
     this._ctrl.removeClass('geodrawer-selected')
+    return this
   }
 }
 

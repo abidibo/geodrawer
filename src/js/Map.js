@@ -489,7 +489,7 @@ const Map = class {
   /**
    * @summary Adds a drawing tool
    * @param {geodrawer.Tool} tool The tool object
-   * @return void
+   * @return {Map} map object
    */
   addTool (tool) {
     if (!(tool instanceof Tool)) {
@@ -502,6 +502,7 @@ const Map = class {
       throw new Error(sprintf('The tool {0} is not supported', toolName))
     }
     this._state.tools[toolName] = tool
+    return this
   }
 
   /**
@@ -520,16 +521,17 @@ const Map = class {
    * @summary Removes a drawing tool
    * @param {String} toolName The name of the tool to be removed
    * @param {geodrawer.Tool} tool The tool object
-   * @return void
+   * @return {Map} map object
    */
   removeTool (toolName) {
-    if (this._supportedTools.indexOf(toolName) === -1) {
+    if (toolName && this._supportedTools.indexOf(toolName) === -1) {
       throw new Error(sprintf('The {0} tool is not supported', toolName))
     }
     if (this._state.tools[toolName]) {
       this._state.tools[toolName].deactivate(true)
       delete this._state.tools[toolName]
     }
+    return this
   }
 
   /**
@@ -543,7 +545,7 @@ const Map = class {
   /**
    * @summary Sets the active drawing tool name
    * @param {geodrawer.Tool|null} tool The actual drawing tool, null to have no active tool
-   * @return void
+   * @return {Map} map object
    */
   setDrawingTool (tool) {
     if (tool !== null && !this._state.tools.hasOwnProperty(tool.getToolName())) {
@@ -554,11 +556,12 @@ const Map = class {
     if (tool) {
       tool.setSelected()
     }
+    return this
   }
 
   /**
    * @summary Renders the widget
-   * @return void
+   * @return {Map} map object
    */
   render () {
     // map initialization
@@ -567,6 +570,8 @@ const Map = class {
     this._initControllers()
     // init tools
     this._initTools()
+
+    return this
   }
 
   /**
@@ -583,7 +588,7 @@ const Map = class {
 
   /**
    * @summary Clears the map
-   * @return void
+   * @return {Map} map object
    */
   clearMap () {
     for (let k in this._state.tools) {
@@ -592,6 +597,7 @@ const Map = class {
       }
     }
     console.info('geodrawer: map cleared')
+    return this
   }
 
   /**
@@ -618,25 +624,27 @@ const Map = class {
   /**
    * @summary Sets the center of the map
    * @param {Array} center The [lat, lng] coordinates array
-   * @return void
+   * @return {Map} map object
    */
   setCenter (center) {
     this._options.center = center
     if (this._map) {
       this._map.setCenter(new google.maps.LatLng(center[0], center[1]))
     }
+    return this
   }
 
   /**
    * @summary Sets the zoom of the map
    * @param {Number} zoom The zoom level
-   * @return void
+   * @return {Map} map object
    */
   setZoom (zoom) {
     this._options.zoom = zoom
     if (this._map) {
       this._map.setZoom(zoom)
     }
+    return this
   }
 
   /**
@@ -646,7 +654,7 @@ const Map = class {
    *    If 'default' the built-in controller is used, if <code>null</code> the clear map
    *    functionality is removed. If selctor or jQuery element the clear map functionality
    *    is attached to the element.
-   * @return void
+   * @return {Map} map object
    */
   setClearMapCtrl (ctrl) {
     if (ctrl !== this._options.clearMapCtrl) {
@@ -654,6 +662,7 @@ const Map = class {
     }
     this._options.clearMapCtrl = ctrl
     this._setClearMapController()
+    return this
   }
 
   /**
@@ -663,7 +672,7 @@ const Map = class {
    *    If 'default' the built-in controller is used, if <code>null</code> the export map
    *    functionality is removed. If selctor or jQuery element the export map functionality
    *    is attached to the element.
-   * @return void
+   * @return {Map} map object
    */
   setExportMapCtrl (ctrl) {
     if (ctrl !== this._options.exportMapCtrl) {
@@ -671,12 +680,13 @@ const Map = class {
     }
     this._options.exportMapCtrl = ctrl
     this._setExportMapController()
+    return this
   }
 
   /**
    * @summary Sets the geocoder map field option
    * @param {Boolean} activate Whether or not to activate the geocoder functionality
-   * @return void
+   * @return {Map} map object
    */
   setGeocoderMapField (activate) {
     this._options.geocoderMapField = activate
@@ -685,6 +695,7 @@ const Map = class {
     } else {
       this._setGeocoderMapFieldController()
     }
+    return this
   }
 
   /**
@@ -693,7 +704,7 @@ const Map = class {
    *    The help tips map controller (shows tips about drawing tools).
    *    If 'default' the built-in controller is used, if <code>null</code> the tips box is not shown,
    *    if selector or jQuery element the functionality is attached to the element
-   * @return void
+   * @return {Map} map object
    */
   setTipsMapCtrl (ctrl) {
     if (ctrl !== this._options.tipsMapCtrl) {
@@ -701,12 +712,13 @@ const Map = class {
     }
     this._options.tipsMapCtrl = ctrl
     this._setTipsMapController()
+    return this
   }
 
   /**
    * @summary Sets the fullscreen option
    * @param {Boolean} activate Whether or not to activate the fullscreen functionality
-   * @return void
+   * @return {Map} map object
    */
   setFullscreen (activate) {
     this._options.fullscreen = activate
@@ -715,6 +727,7 @@ const Map = class {
     } else {
       this._setFullscreenController()
     }
+    return this
   }
 
   /**
@@ -759,6 +772,7 @@ const Map = class {
    * @summary Imports data
    * @description Data must be in the same format as the exported ones, see {@link Map#exportMap}
    * @param {Object} data The data object
+   * @return {Map} map object
    */
   importMap (data) {
     this._supportedTools.forEach(
@@ -776,11 +790,12 @@ const Map = class {
       }
     )
     this._map.fitBounds(this._bounds)
+    return this
   }
 
   /**
-   * @summary Sets the map center converting the geocoderf ield input address in a LatLng point
-   * @return void
+   * @summary Sets the map center converting the geocoder field input address in a LatLng point
+   * @return {Map} map object
    */
   geocoderCenter () {
     let self = this
@@ -796,11 +811,12 @@ const Map = class {
         alert(status)
       }
     })
+    return this
   }
 
   /**
    * @summary Fires a map click in a LatLng point converted from the geocoder field input address
-   * @return void
+   * @return {Map} map object
    */
   geocoderDraw () {
     let self = this
@@ -822,6 +838,7 @@ const Map = class {
         alert(status)
       }
     })
+    return this
   }
 }
 

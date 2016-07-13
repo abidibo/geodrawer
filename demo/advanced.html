@@ -40,7 +40,7 @@
                  <p>
                     <label>Shape type</label>
                     <select id="shape-type">
-                       <option>select a type</option>
+                       <option value=''>select a type</option>
                        <option value="point">point of interest</option>
                        <option value="polyline">path</option>
                     </select>
@@ -83,10 +83,7 @@ var cb = function() {
    mymap.render();
    
    $('#shape-type').on('change', function() {
-      mymap.clearMap();
-      if (shape) {
-         mymap.removeTool(shape);
-      }
+      mymap.clearMap().removeTool(shape);
       shape = $(this).val();
       $('#id_lat').val('');
       $('#id_lng').val('');
@@ -129,10 +126,7 @@ geodrawer.ready(cb);
                mymap.render();
                
                $('#shape-type').on('change', function() {
-                  mymap.clearMap();
-                  if (shape) {
-                     mymap.removeTool(shape);
-                  }
+                  mymap.clearMap().removeTool(shape);
                   shape = $(this).val();
                   $('#id_lat').val('');
                   $('#id_lng').val('');

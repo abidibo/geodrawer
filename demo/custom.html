@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>geodrawer custom demo</title>
+        <title>geodrawer custom controllers demo</title>
         <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyArAE-uBvCZTRaf_eaFn4umUdESmoUvoxM"></script>
         <script type="text/javascript" src="../dist/geodrawer.min.js"></script>
         <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?skin=sons-of-obsidian"></script>
@@ -30,17 +30,16 @@
         </style>
     </head>
     <body>
-      <div style="margin: auto; width: 70%;">
-        <h1>geodrawer custom controllers demo</h1>
-advanced
+      <div class="container">
+        <h1 style="margin: 20px 0;">geodrawer custom controllers demo</h1>
         <p>
             <a href="./index.html">See the basic example</a> | 
             <a href="./advanced.html">See the dynamic tools example</a>
         </p>
-        <p>This is a more advanced example.</p>
         <p>Almost every controller of the library can be customized, in order to increase the field of applicability of the library. Maybe 
           you have to use it in an already developed interface, so you can use your own controllers and all the events are binded automatically.</p>
         <p>With a bit of bootstrap, FontAwesome and friends, you can build your preferred interface.</p>
+        <p>In this example I've used bootstrap 4-alpha along with a custom jQuery version (the library will use that one).</p>
         <div id="map-canvas" style="width: 100%; height: 300px;"></div>
         <hr />
         <div class="">
@@ -86,6 +85,13 @@ var cb = function () {
 }
 
 geodrawer.ready(cb);
+        </pre>
+        <h2>css code:</h2>
+        <p>To manage the active state of the tools controllers</p>
+        <pre class="prettyprint linenums">
+.geodrawer-selected {
+  background: red !important;
+}
         </pre>
       </div>
       <script type="text/javascript">

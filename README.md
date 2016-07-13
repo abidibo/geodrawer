@@ -43,7 +43,7 @@ Define the map canvas container somewhere in the document:
 
     <div id="map-canvas"></div>
 
-Instantiate the geodrawer.Map class passing some options, then call its render method, all inside a callback passed to geodrawer.ready(), in order to be sure the library is fully loaded:
+Instantiate the geodrawer.Map class passing some options, then call its render method. Do all this inside a callback function passed to `geodrawer.ready()`, in order to be sure the library is fully loaded:
 
     <script>
       var cb = function () {
@@ -58,8 +58,8 @@ Instantiate the geodrawer.Map class passing some options, then call its render m
             polygon: {},
             circle: {}
           },
-          exportMapCb: function () {
-            console.log('exported data: ', arguments);
+          exportMapCb: function (data) {
+            console.log('exported data: ', data);
           }
         });
         mymap.render();
@@ -81,23 +81,23 @@ Need to import existing data?
 
 The library provides some classes:
 
-- Loader
-- EventDispatcher
-- Map
-- Tool (something like an abstract class)
-- PointTool
-- PolylineTool
-- PolygonTool
-- CircleTool
+- Loader (checks google maps API an loads jquery on the fly if no yet loaded)
+- EventDispatcher (a mediator like event dispatcher)
+- Map (the main class)
+- Tool (something like an abstract class which every tool extends)
+- PointTool (markers)
+- PolylineTool (polylines)
+- PolygonTool (polygons)
+- CircleTool (circles)
 
-each which its own public methods (actually are all public, but some of them are not meant to be, they start with an underscore char).
-Surf the documentation for full reference about the library, or look at the demo page.
+Each class has its own public methods (actually are all public in js, but some of them are not meant to be, and they start with an underscore char).
+Surf the [documentation](https://abidibo.github.io/geodrawer/docs/index.html) for full reference about the library, or look at the [demo page](https://abidibo.github.io/geodrawer/).
 
 Every tool can be customize at runtime, you can add or remove tools, change options and so on...
 
 #### Need to use custom controllers?
 
-If you have already an interface designed with buttons to export data or clear the map, that's not a problem, you can provide your own controllers for all the tools and almost all the functionalities; the library will manage (attach and detach) the events itself.
+If you have already an interface designed with buttons to export data or clear the map, that's not a problem, you can provide your own controllers for all the tools and almost all the functionalities; the library will manage (attach and detach) the events itself. The active controller receives a css class `geodrawer-selected` so that you can manage its active state.
 
 ## Development
 
@@ -139,4 +139,4 @@ To generate the library reference:
 
 ## Credits
 
-This library was developed by [abidibo](http://www.abidibo.net) for [OTTO srl](http://www.otto.to.it)
+[abidibo](http://www.abidibo.net) - [OTTO srl](http://www.otto.to.it)

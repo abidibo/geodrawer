@@ -4,7 +4,7 @@ import Tool from 'Tool'
  * Google maps drawing polygon tool class. Provides methods to draw over the {@link Map} instance
  *
  * <p>The polygon drawing tool class, which allows to draw polygons over the gmapdraw map instance.</p>
- * @extends geodrawer.Tool
+ * @extends Tool
  */
 const PolygonTool = class extends Tool {
   /*

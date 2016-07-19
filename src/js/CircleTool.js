@@ -4,7 +4,7 @@ import Tool from 'Tool'
  * Google maps drawing circle tool class. Provides methods to draw over the {@link Map} instance
  *
  * <p>The circle drawing tool class, which allows to draw circles over the gmapdraw map instance.</p>
- * @extends geodrawer.Tool
+ * @extends Tool
  */
 const CircleTool = class extends Tool {
   /**

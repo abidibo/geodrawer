@@ -4,7 +4,7 @@ import Tool from 'Tool'
  * Google maps drawing polyline tool class. Provides methods to draw over the {@link Map} instance
  *
  * <p>The polyline drawing tool class, which allows to draw polylines over the gmapdraw map instance.</p>
- * @extends geodrawer.Tool
+ * @extends Tool
  */
 const PolylineTool = class extends Tool {
   /**
